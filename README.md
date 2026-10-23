@@ -7,6 +7,6 @@ This repository contains coursework, notes, and project materials developed for 
 
 Materials are organized into weekly folders (for example, `Week-01`, `Week-02`, …), with each folder holding the content, exercises, and deliverables for that week of the course.
 
-## Weekly Material
+## Weekly Work
 
-1. [Week-01](Week-01/)
+1. [Week-01](Week-01/): **Connect Four**, a single-page browser game built with HTML and JavaScript. Play against a computer opponent that uses a minimax search with alpha-beta pruning (Easy, Medium or Hard), or switch to 2 Players to take turns on the same device.
