@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ludo</title>
+<style>
+  :root {
+    --bg: #f3f0e8;
+    --surface: #ffffff;
+    --surface-2: #f8f6f1;
+    --text: #1f2430;
+    --muted: #6a7183;
+    --line: #e2dccf;
+    --cell: #ffffff;
+    --grid: #cbc4b5;
+    --star: #b5ad9c;
+    --accent: #1f2430;
+    --accent-text: #ffffff;
+    --danger: #c62828;
+    --shadow: 0 14px 34px rgba(30, 30, 50, .16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151c;
+      --surface: #1b202b;
+      --surface-2: #222836;
+      --text: #e8ebf1;
+      --muted: #97a0b2;
+      --line: #2d3445;
+      --cell: #eeebe4;
+      --grid: #b9b3a6;
+      --star: #a29b8c;
+      --accent: #e8ebf1;
+      --accent-text: #12151c;
+      --danger: #ff6b6b;
+      --shadow: 0 14px 34px rgba(0, 0, 0, .45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  button, input, select { font: inherit; color: inherit; }
+
+  /* ---------- Header ---------- */
+  .top {
+    max-width: 1080px; margin: 0 auto; padding: 18px 16px 8px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
+  .logo { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 26px; height: 26px; }
+  .logo i { border-radius: 4px; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; transition: transform .1s, background .15s;
+  }
+  .btn:hover:not(:disabled) { background: var(--surface-2); }
+  .btn:active:not(:disabled) { transform: scale(.97); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .btn.primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.1); }
+  .btn.icon { padding: 8px 11px; }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    max-width: 1080px; margin: 0 auto; padding: 8px 16px 32px;
+    display: grid; gap: 18px; justify-items: center;
+  }
+  @media (min-width: 960px) {
+    .layout { grid-template-columns: 1fr 320px; align-items: start; justify-items: stretch; }
+    .board-wrap { justify-self: end; }
+  }
+  .board-wrap { width: 100%; display: flex; justify-content: center; }
+  .board {
+    position: relative;
+    width: min(100%, 680px, max(300px, calc(100svh - 130px)));
+    aspect-ratio: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    user-select: none; -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .board svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #tokens { position: absolute; inset: 0; }
+
+  /* ---------- Tokens ---------- */
+  .token {
+    position: absolute;
+    width: calc(100% / 15); height: calc(100% / 15);
+    transform: translate(-50%, -50%) translate(var(--tx, 0%), var(--ty, 0%)) scale(var(--sc, 1));
+    transition: left .15s ease-out, top .15s ease-out, transform .2s ease-out;
+    z-index: 2;
+  }
+  .token.flying { transition: left .6s cubic-bezier(.5, 0, .2, 1), top .6s cubic-bezier(.5, 0, .2, 1), transform .6s; z-index: 6; }
+  .token.front { z-index: 3; }
+  .pawn {
+    position: absolute; inset: 9%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--c-light) 0 8%, var(--c) 52%, var(--c-dark) 100%);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .4);
+    display: grid; place-items: center;
+  }
+  .pawn::after {
+    content: ""; position: absolute; inset: 26%; border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .35), 0 1px 0 rgba(255, 255, 255, .35);
+  }
+  .num {
+    position: relative; z-index: 1; font-size: clamp(8px, 1.5vw, 12px); font-weight: 800;
+    color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .7); opacity: 0;
+  }
+  .token.movable { z-index: 5; cursor: pointer; }
+  .token.movable .num { opacity: 1; }
+  .token.movable::before {
+    content: ""; position: absolute; inset: -6%; border-radius: 50%;
+    border: 2.5px dashed #1f2430;
+    animation: spin 3s linear infinite, pulse .9s ease-in-out infinite alternate;
+  }
+  .token.movable:hover .pawn { filter: brightness(1.12); }
+  @keyframes spin { to { rotate: 360deg; } }
+  @keyframes pulse { from { scale: .92; } to { scale: 1.08; } }
+  .token.winner .pawn { animation: bounce .6s ease-in-out infinite alternate; }
+  @keyframes bounce { to { translate: 0 -18%; } }
+
+  /* ---------- Side panel ---------- */
+  .panel { width: 100%; max-width: 680px; display: grid; gap: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+  .turn-head { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .chip { width: 16px; height: 16px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .5); }
+  .dice-row { display: flex; align-items: center; gap: 16px; margin-top: 14px; }
+  .die {
+    width: 76px; height: 76px; flex: none;
+    border-radius: 16px; border: 3px solid var(--die-c, var(--line));
+    background: #fff; cursor: pointer; padding: 10px;
+    display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .18), inset 0 -4px 0 rgba(0, 0, 0, .06);
+    transition: transform .15s, border-color .3s;
+  }
+  .die:disabled { cursor: default; }
+  .die.ready { animation: wiggle 1.4s ease-in-out infinite; }
+  .die.ready:hover { transform: scale(1.05); }
+  .die .pip { width: 72%; height: 72%; margin: auto; border-radius: 50%; background: #1f2430; opacity: 0; }
+  .die .pip.on { opacity: 1; }
+  .die .q { grid-column: 1 / -1; grid-row: 1 / -1; margin: auto; font-size: 30px; font-weight: 800; color: #b9b3a6; }
+  .die.rolling { animation: tumble .55s ease-in-out; }
+  @keyframes tumble {
+    0% { transform: rotate(0) scale(1); }
+    30% { transform: rotate(-160deg) scale(.85); }
+    65% { transform: rotate(120deg) scale(1.08); }
+    100% { transform: rotate(0) scale(1); }
+  }
+  @keyframes wiggle { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-7deg); } 90% { transform: rotate(6deg); } 95% { transform: rotate(-3deg); } }
+  .dice-hint { font-size: 14px; color: var(--muted); }
+  .dice-hint strong { display: block; color: var(--text); font-size: 15px; margin-bottom: 2px; }
+  #msg { margin: 14px 0 0; min-height: 20px; font-size: 14px; line-height: 1.4; }
+
+  .players { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  @media (min-width: 600px) and (max-width: 959px) { .players { grid-template-columns: 1fr 1fr; } }
+  .player {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 10px;
+    padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .player.current { border-color: var(--pc); box-shadow: 0 0 0 2px var(--pc); }
+  .player .name { font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .player .meta { font-size: 12px; color: var(--muted); }
+  .player .bar { grid-column: 1 / -1; height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+  .player .bar i { display: block; height: 100%; background: var(--pc); border-radius: 99px; transition: width .4s; }
+  .tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--surface-2); color: var(--muted); }
+  .panel-foot { font-size: 12px; color: var(--muted); text-align: center; }
+  kbd { font: inherit; font-size: 11px; padding: 1px 5px; border-radius: 5px; border: 1px solid var(--line); background: var(--surface); }
+
+  /* ---------- Dialogs ---------- */
+  dialog {
+    border: 1px solid var(--line); border-radius: 20px; padding: 0;
+    background: var(--surface); color: var(--text);
+    width: min(600px, calc(100vw - 24px)); max-height: calc(100svh - 24px);
+    box-shadow: var(--shadow);
+  }
+  dialog::backdrop { background: rgba(10, 12, 18, .55); backdrop-filter: blur(2px); }
+  .dlg-body { padding: 20px; }
+  .dlg-body h2 { margin: 0 0 4px; font-size: 22px; }
+  .dlg-sub { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+  .dlg-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; padding: 14px 20px 20px; border-top: 1px solid var(--line); }
+  .dlg-actions .spacer { flex: 1; }
+
+  .seat {
+    display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; margin-bottom: 10px;
+    grid-template-columns: 1fr 150px;
+  }
+  .seat.off { opacity: .55; }
+  .seat-title { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .seat input[type=text], .seat select {
+    width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2);
+  }
+  .swatches { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .sw {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .6);
+  }
+  .sw[aria-pressed="true"] { border-color: var(--text); transform: scale(1.12); }
+  .custom-color { position: relative; width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 2px dashed var(--muted); }
+  .custom-color input { position: absolute; inset: -8px; width: 44px; height: 44px; border: 0; padding: 0; cursor: pointer; opacity: 0; }
+  .custom-color span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: var(--muted); pointer-events: none; }
+  @media (max-width: 480px) { .seat { grid-template-columns: 1fr; } }
+  .toggle { display: flex; align-items: flex-start; gap: 10px; padding: 12px; border-radius: 14px; background: var(--surface-2); cursor: pointer; }
+  .toggle input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
+  .toggle small { display: block; color: var(--muted); }
+  .error { color: var(--danger); font-size: 14px; min-height: 20px; margin: 10px 0 0; }
+  .count-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .count-label { font-weight: 700; }
+  .count-note { margin: 8px 0 12px; font-size: 13px; color: var(--muted); }
+  .segmented { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+  .segmented button {
+    border: 0; background: transparent; color: var(--muted); font-weight: 700;
+    min-width: 44px; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  }
+  .segmented button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .toggle.disabled { opacity: .5; cursor: not-allowed; }
+  .rules h3 { margin: 18px 0 6px; font-size: 16px; }
+  .rules ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; }
+
+  .stat-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .tile { background: var(--surface-2); border-radius: 14px; padding: 12px; }
+  .tile .k { font-size: 12px; color: var(--muted); }
+  .tile .v { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .empty { color: var(--muted); text-align: center; padding: 18px 0; }
+
+  .win-body { text-align: center; padding: 28px 20px 8px; }
+  .trophy { font-size: 64px; display: inline-block; animation: pop .7s cubic-bezier(.2, 1.6, .4, 1) both; }
+  @keyframes pop { from { transform: scale(0) rotate(-30deg); } to { transform: scale(1) rotate(0); } }
+  .win-body h2 { margin: 6px 0 4px; font-size: 26px; }
+
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+  .toast {
+    position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 20px);
+    background: var(--accent); color: var(--accent-text); padding: 10px 16px; border-radius: 999px;
+    font-size: 14px; font-weight: 600; opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; z-index: 1001;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 520px) {
+    .brand h1 { font-size: 22px; }
+    .btn { padding: 7px 11px; font-size: 13px; }
+    .die { width: 64px; height: 64px; padding: 8px; }
+    .stat-tiles .v { font-size: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .token, .token.flying { transition-duration: .01s; }
+    .token.movable::before, .die.ready, .token.winner .pawn { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="logo" id="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <h1>Ludo</h1>
+  </div>
+  <nav class="actions" aria-label="Game actions">
+    <button class="btn primary" id="btnNew">New game</button>
+    <button class="btn" id="btnSave">Save</button>
+    <button class="btn" id="btnLoad">Load</button>
+    <button class="btn" id="btnStats">Stats</button>
+    <button class="btn" id="btnRules">How to play</button>
+    <button class="btn icon" id="btnSound" aria-label="Sound on" title="Toggle sound">🔊</button>
+  </nav>
+</header>
+
+<main class="layout">
+  <div class="board-wrap">
+    <div class="board" id="board">
+      <svg id="boardSvg" viewBox="0 0 15 15" aria-hidden="true"></svg>
+      <div id="tokens"></div>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <section class="card" aria-label="Current turn">
+      <div class="turn-head"><span class="chip" id="turnChip"></span><span id="turnName">—</span></div>
+      <div class="dice-row">
+        <button class="die" id="die" aria-label="Roll the dice"></button>
+        <div class="dice-hint" id="diceHint"></div>
+      </div>
+      <p id="msg" aria-live="polite"></p>
+    </section>
+    <ul class="players" id="players" aria-label="Players"></ul>
+    <p class="panel-foot"><kbd>Space</kbd> roll · <kbd>1</kbd>–<kbd>4</kbd> pick a token</p>
+  </aside>
+</main>
+
+<!-- Setup -->
+<dialog id="setupDlg" aria-labelledby="setupTitle">
+  <form method="dialog" id="setupForm">
+    <div class="dlg-body">
+      <h2 id="setupTitle">New game</h2>
+      <p class="dlg-sub">Choose how many players, then who plays each corner, their color and the computer's skill.</p>
+      <div class="count-row">
+        <span class="count-label" id="countLabel">Number of players</span>
+        <div class="segmented" role="group" aria-labelledby="countLabel" id="countGroup">
+          <button type="button" data-count="2">2</button>
+          <button type="button" data-count="3">3</button>
+          <button type="button" data-count="4">4</button>
+        </div>
+      </div>
+      <p class="count-note" id="countNote"></p>
+      <div id="seats"></div>
+      <label class="toggle" id="teamToggle">
+        <input type="checkbox" id="teamMode">
+        <span><strong>Team mode (2 vs 2)</strong>
+          <small>Opposite corners are partners. Partners can't capture each other, and once you finish you move your partner's tokens. Available with 4 players.</small></span>
+      </label>
+      <p class="error" id="setupError" role="alert"></p>
+    </div>
+    <div class="dlg-actions">
+      <button type="button" class="btn" id="setupLoad" hidden>Load saved game</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn" id="setupCancel">Cancel</button>
+      <button type="button" class="btn primary" id="setupStart">Start game</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Stats -->
+<dialog id="statsDlg" aria-labelledby="statsTitle">
+  <div class="dlg-body">
+    <h2 id="statsTitle">Statistics</h2>
+    <p class="dlg-sub">Completed games on this device.</p>
+    <div class="stat-tiles">
+      <div class="tile"><div class="k">Games played</div><div class="v" id="stGames">0</div></div>
+      <div class="tile"><div class="k">Avg turns / game</div><div class="v" id="stAvg">–</div></div>
+      <div class="tile"><div class="k">Team games</div><div class="v" id="stTeam">0</div></div>
+    </div>
+    <div id="stTable"></div>
+  </div>
+  <div class="dlg-actions">
+    <button type="button" class="btn" id="statsReset">Reset stats</button>
+    <span class="spacer"></span>
+    <button type="button" class="btn primary" id="statsClose">Close</button>
+  </div>
+</dialog>
+
+<!-- How to play -->
+<dialog id="rulesDlg" aria-labelledby="rulesTitle">
+  <div class="dlg-body rules">
+    <h2 id="rulesTitle">How to play</h2>
+    <p class="dlg-sub">Be the first to move all four of your tokens around the board and into your home triangle.</p>
+
+    <h3>Taking turns</h3>
+    <ul>
+      <li>Roll the die and move one of your tokens that many squares, clockwise around the board.</li>
+      <li>Every token starts in its base. You need to roll a <strong>6</strong> to bring a token out onto your colored start square.</li>
+      <li>Rolling a 6 gives you another roll. Three 6s in a row ends your turn.</li>
+      <li>After going around the board, a token turns into your colored home column. It needs the exact number to reach home, and bringing a token home earns another roll.</li>
+    </ul>
+
+    <h3>Capturing</h3>
+    <ul>
+      <li>If your token lands on a square holding an opponent's token, that token is <strong>captured</strong> and sent back to its base. Every opponent token on that square is captured.</li>
+      <li>A captured token must roll a <strong>6</strong> again to re-enter the board, so it loses all its progress.</li>
+      <li>Capturing earns you another roll.</li>
+      <li><strong>Safe squares</strong> (the stars and the colored start squares) can't be used for captures. Any number of tokens can share them.</li>
+      <li>Your own tokens never capture each other, and tokens in a home column are always safe.</li>
+      <li>Computer players hunt for captures too, so think twice before parking just in front of one.</li>
+    </ul>
+
+    <h3>Number of players</h3>
+    <ul>
+      <li><strong>2 players:</strong> you play from opposite corners (top-left and bottom-right). The two unused corners and their colors are removed from the board. Turns simply alternate, and the first player to get all four tokens home wins.</li>
+      <li><strong>3 players:</strong> the top-left, top-right and bottom-right corners play, and the bottom-left corner is removed.</li>
+      <li><strong>4 players:</strong> everyone plays for themselves, or turn on <strong>team mode</strong> to play 2 vs 2 with the opposite corner as your partner.</li>
+    </ul>
+
+    <h3>Controls</h3>
+    <ul>
+      <li>Click the die, or press <kbd>Space</kbd>, to roll.</li>
+      <li>Click a highlighted token, or press <kbd>1</kbd>–<kbd>4</kbd>, to move it. If only one move is possible, it's made for you.</li>
+    </ul>
+  </div>
+  <div class="dlg-actions">
+    <button type="button" class="btn primary" id="rulesClose">Got it</button>
+  </div>
+</dialog>
+
+<!-- Winner -->
+<dialog id="winDlg" aria-labelledby="winTitle">
+  <div class="win-body">
+    <div class="trophy">🏆</div>
+    <h2 id="winTitle"></h2>
+    <p class="dlg-sub" id="winSub"></p>
+  </div>
+  <div class="dlg-actions">
+    <button type="button" class="btn" id="winStats">Stats</button>
+    <span class="spacer"></span>
+    <button type="button" class="btn" id="winSetup">Change setup</button>
+    <button type="button" class="btn primary" id="winAgain">Play again</button>
+  </div>
+</dialog>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  // =====================================================================
+  //  Board geometry (15 x 15 grid; seats clockwise from top-left)
+  // =====================================================================
+  const TRACK = [];
+  function seg(r1, c1, r2, c2) {
+    const dr = Math.sign(r2 - r1), dc = Math.sign(c2 - c1);
+    let r = r1, c = c1;
+    TRACK.push([r, c]);
+    while (r !== r2 || c !== c2) { r += dr; c += dc; TRACK.push([r, c]); }
+  }
+  seg(6, 1, 6, 5);  seg(5, 6, 0, 6);  seg(0, 7, 0, 8);   seg(1, 8, 5, 8);
+  seg(6, 9, 6, 14); seg(7, 14, 8, 14); seg(8, 13, 8, 9); seg(9, 8, 14, 8);
+  seg(14, 7, 14, 6); seg(13, 6, 9, 6); seg(8, 5, 8, 0); seg(7, 0, 6, 0);   // 52 squares
+
+  const START = [0, 13, 26, 39];
+  const SAFE = new Set([0, 8, 13, 21, 26, 34, 39, 47]);
+  const HOME_COL = [
+    [[7, 1], [7, 2], [7, 3], [7, 4], [7, 5]],
+    [[1, 7], [2, 7], [3, 7], [4, 7], [5, 7]],
+    [[7, 13], [7, 12], [7, 11], [7, 10], [7, 9]],
+    [[13, 7], [12, 7], [11, 7], [10, 7], [9, 7]],
+  ];
+  const BASE_ORIGIN = [[0, 0], [0, 9], [9, 9], [9, 0]];            // [row, col]
+  const SLOTS = [[2, 2], [4, 2], [2, 4], [4, 4]];                   // [dx, dy] inside a base
+  const FINISH = [[6.55, 7.5], [7.5, 6.55], [8.45, 7.5], [7.5, 8.45]]; // [x, y] in each center triangle
+  const LAST_TRACK = 50, GOAL = 56;  // progress: -1 base, 0-50 track, 51-55 home column, 56 home
+  const SEAT_LABELS = ['Top-left', 'Top-right', 'Bottom-right', 'Bottom-left'];
+
+  const PRESETS = [
+    { name: 'Red', hex: '#e53935' }, { name: 'Green', hex: '#43a047' },
+    { name: 'Yellow', hex: '#f9c80e' }, { name: 'Blue', hex: '#1e88e5' },
+    { name: 'Purple', hex: '#8e24aa' }, { name: 'Orange', hex: '#fb8c00' },
+    { name: 'Teal', hex: '#00897b' }, { name: 'Pink', hex: '#d81b60' },
+  ];
+  const TYPES = { human: 'Human', easy: 'AI · Easy', medium: 'AI · Medium', hard: 'AI · Hard', off: 'Not playing' };
+  // Which corners play for each player count (2 players sit opposite each other).
+  const SEATS_FOR = { 2: [0, 2], 3: [0, 1, 2], 4: [0, 1, 2, 3] };
+  const UNUSED = '#d3cec3';
+  const DEFAULT_CONFIG = {
+    count: 4,
+    team: false,
+    seats: [
+      { name: 'Red', color: '#e53935', type: 'human' },
+      { name: 'Green', color: '#43a047', type: 'medium' },
+      { name: 'Yellow', color: '#f9c80e', type: 'medium' },
+      { name: 'Blue', color: '#1e88e5', type: 'medium' },
+    ],
+  };
+
+  const STEP_MS = 150, AI_ROLL_MS = 650, AI_MOVE_MS = 500;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // =====================================================================
+  //  Small helpers
+  // =====================================================================
+  const $ = id => document.getElementById(id);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  const store = {
+    get(k, fallback = null) { try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
+  function mix(hex, target, amt) {
+    const a = parseInt(hex.slice(1), 16), b = parseInt(target.slice(1), 16);
+    const ch = sh => Math.round(((a >> sh) & 255) * (1 - amt) + ((b >> sh) & 255) * amt);
+    return '#' + ((1 << 24) | (ch(16) << 16) | (ch(8) << 8) | ch(0)).toString(16).slice(1);
+  }
+  function toast(text) {
+    const t = $('toast');
+    t.textContent = text;
+    t.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  // =====================================================================
+  //  Sound effects (synthesized with Web Audio, no files needed)
+  // =====================================================================
+  const sfx = (() => {
+    let ctx = null;
+    let on = store.get('ludo-sound', true);
+    function ac() {
+      if (!on) return null;
+      if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+    function tone(freq, at, dur, { type = 'sine', vol = .15, to = null } = {}) {
+      const c = ac(); if (!c) return;
+      const o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime + at;
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t0);
+      if (to) o.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+      g.gain.setValueAtTime(.0001, t0);
+      g.gain.exponentialRampToValueAtTime(vol, t0 + .012);
+      g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+      o.connect(g).connect(c.destination);
+      o.start(t0); o.stop(t0 + dur + .03);
+    }
+    function noise(at, dur, vol = .2, freq = 2000) {
+      const c = ac(); if (!c) return;
+      const len = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+      const src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(), t0 = c.currentTime + at;
+      src.buffer = buf; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = 1.2;
+      g.gain.value = vol;
+      src.connect(f).connect(g).connect(c.destination);
+      src.start(t0);
+    }
+    return {
+      get on() { return on; },
+      set on(v) { on = v; store.set('ludo-sound', v); },
+      unlock() { ac(); },
+      roll() { for (let k = 0; k < 7; k++) noise(k * .068 + Math.random() * .02, .05, .35, 1500 + Math.random() * 2000); tone(180, .48, .08, { type: 'square', vol: .06 }); },
+      step(k) { tone(500 + k * 40, 0, .07, { type: 'triangle', vol: .09 }); },
+      enter() { tone(330, 0, .16, { type: 'triangle', vol: .16, to: 700 }); },
+      capture() { tone(760, 0, .38, { type: 'sawtooth', vol: .1, to: 90 }); noise(0, .2, .3, 700); },
+      home() { [784, 988, 1319].forEach((f, k) => tone(f, k * .09, .28, { type: 'triangle', vol: .14 })); },
+      six() { tone(1046, 0, .12, { type: 'sine', vol: .08 }); tone(1568, .07, .14, { type: 'sine', vol: .07 }); },
+      win() {
+        [523, 659, 784, 1046].forEach((f, k) => tone(f, k * .13, .3, { type: 'triangle', vol: .16 }));
+        [523, 659, 784, 1046].forEach(f => tone(f, .6, 1.1, { type: 'sine', vol: .09 }));
+      },
+    };
+  })();
+
+  // =====================================================================
+  //  Game state
+  // =====================================================================
+  let config = store.get('ludo-config', null) || clone(DEFAULT_CONFIG);
+  let G = null;        // the whole game; plain JSON so it can be saved
+  let gid = 0;         // bumps on new/load so stale timers and animations stop
+  let busy = false;
+
+  const active = s => G.seats[s].type !== 'off';
+  const isAI = s => ['easy', 'medium', 'hard'].includes(G.seats[s].type);
+  const sameTeam = (a, b) => a === b || (G.team && a % 2 === b % 2);
+  const allHome = (t, s) => t[s].every(p => p === GOAL);
+  const acting = s => (G.team && allHome(G.tokens, s)) ? (s + 2) % 4 : s;  // finished players move their partner's tokens
+  const absOf = (s, p) => (START[s] + p) % 52;
+  const nameOf = s => G.seats[s].name;
+
+  function newState(cfg) {
+    const seats = clone(cfg.seats);
+    const first = seats.findIndex(s => s.type !== 'off');
+    return {
+      seats, team: !!cfg.team,
+      tokens: [0, 1, 2, 3].map(() => [-1, -1, -1, -1]),
+      current: first, dice: null, sixes: 0, phase: 'roll',
+      turns: 0, turnsBy: [0, 0, 0, 0], winner: null, msg: '',
+    };
+  }
+
+  // =====================================================================
+  //  Rules
+  // =====================================================================
+  function legalMoves(t, s, d) {
+    const out = [];
+    t[s].forEach((p, i) => {
+      if (p < 0 ? d === 6 : p + d <= GOAL) out.push(i);
+    });
+    return out;
+  }
+
+  // Returns a new token table after moving token i of seat s by d, plus what happened.
+  function simulate(t, s, i, d) {
+    const n = t.map(a => a.slice());
+    const from = n[s][i];
+    const to = from < 0 ? 0 : from + d;
+    n[s][i] = to;
+    const captured = [];
+    if (to <= LAST_TRACK) {
+      const sq = absOf(s, to);
+      if (!SAFE.has(sq)) {
+        for (let o = 0; o < 4; o++) {
+          if (o === s || !active(o) || sameTeam(o, s)) continue;
+          n[o].forEach((p, j) => {
+            if (p >= 0 && p <= LAST_TRACK && absOf(o, p) === sq) { n[o][j] = -1; captured.push([o, j]); }
+          });
+        }
+      }
+    }
+    return { t: n, from, to, captured };
+  }
+
+  // Chance (0-1) that a token of seat s on track square sq gets hit on the next round.
+  function threat(t, s, sq) {
+    if (SAFE.has(sq)) return 0;
+    let survive = 1;
+    for (let e = 0; e < 4; e++) {
+      if (!active(e) || sameTeam(e, s)) continue;
+      const dists = new Set();
+      t[e].forEach(p => {
+        if (p < 0 || p > LAST_TRACK) return;
+        const dist = (sq - absOf(e, p) + 52) % 52;
+        if (dist >= 1 && dist <= 6 && p + dist <= LAST_TRACK) dists.add(dist);
+      });
+      survive *= 1 - dists.size / 6;
+    }
+    return 1 - survive;
+  }
+
+  // =====================================================================
+  //  Computer players
+  // =====================================================================
+  function tokenValue(p) {
+    if (p < 0) return 0;
+    if (p === GOAL) return 130;
+    if (p > LAST_TRACK) return 75 + (p - LAST_TRACK) * 4;   // home column: safe
+    return 10 + p * 1.2;
+  }
+
+  // Reward a token for sitting 1-6 squares behind an exposed enemy it could capture next roll.
+  function huntValue(t, o, p) {
+    const from = absOf(o, p);
+    let v = 0;
+    for (let e = 0; e < 4; e++) {
+      if (!active(e) || sameTeam(e, o)) continue;
+      t[e].forEach(q => {
+        if (q < 0 || q > LAST_TRACK) return;
+        const sq = absOf(e, q);
+        if (SAFE.has(sq)) return;
+        const dist = (sq - from + 52) % 52;
+        if (dist >= 1 && dist <= 6 && p + dist <= LAST_TRACK) v += 2 + tokenValue(q) * .06;
+      });
+    }
+    return v;
+  }
+
+  function evaluate(t, s) {
+    let score = 0;
+    for (let o = 0; o < 4; o++) {
+      if (!active(o)) continue;
+      if (sameTeam(o, s)) {
+        t[o].forEach(p => {
+          let v = tokenValue(p);
+          if (p >= 0 && p <= LAST_TRACK) {
+            v -= threat(t, o, absOf(o, p)) * (tokenValue(p) + 12);
+            v += huntValue(t, o, p);
+          }
+          score += v;
+        });
+      } else {
+        t[o].forEach(p => { score -= tokenValue(p) * .9; });
+      }
+    }
+    return score;
+  }
+
+  function aiChoose(s, d, moves, level) {
+    // Progress the captured tokens had made: knocking out a far-travelled token is worth more.
+    const victimLoss = sim => sim.captured.reduce((a, [o, j]) => a + G.tokens[o][j], 0);
+
+    if (level === 'easy') {
+      // Easy notices a capture about half the time; otherwise it moves at random.
+      const captures = moves.filter(i => simulate(G.tokens, s, i, d).captured.length);
+      if (captures.length && Math.random() < .5) return captures[Math.floor(Math.random() * captures.length)];
+      return moves[Math.floor(Math.random() * moves.length)];
+    }
+
+    let best = moves[0], bestScore = -Infinity;
+    for (const i of moves) {
+      const sim = simulate(G.tokens, s, i, d);
+      let sc;
+      if (level === 'hard') {
+        sc = evaluate(sim.t, s);
+        if (sim.captured.length) sc += 20 + victimLoss(sim) * .3;   // capturing also earns another roll
+        if (sim.to === GOAL) sc += 12;
+      } else {
+        // Medium: simple rules of thumb with a little noise.
+        sc = sim.to * .15 + Math.random() * 8;
+        if (sim.from < 0) sc += 30;
+        if (sim.captured.length) sc += 50 * sim.captured.length + victimLoss(sim) * .8;
+        if (sim.to === GOAL) sc += 40;
+        else if (sim.to > LAST_TRACK && sim.from <= LAST_TRACK) sc += 25;
+        if (sim.to <= LAST_TRACK) {
+          const sq = absOf(s, sim.to);
+          if (SAFE.has(sq)) sc += 12;
+          sc -= threat(sim.t, s, sq) * 35;
+        }
+        if (sim.from >= 0 && sim.from <= LAST_TRACK) sc += threat(G.tokens, s, absOf(s, sim.from)) * 25;
+      }
+      if (sc > bestScore) { bestScore = sc; best = i; }
+    }
+    return best;
+  }
+
+  // =====================================================================
+  //  Rendering: board
+  // =====================================================================
+  function starPoly(cx, cy, fill, R = .36, r = .15) {
+    const pts = [];
+    for (let k = 0; k < 10; k++) {
+      const ang = -Math.PI / 2 + k * Math.PI / 5, rad = k % 2 ? r : R;
+      pts.push((cx + rad * Math.cos(ang)).toFixed(3) + ',' + (cy + rad * Math.sin(ang)).toFixed(3));
+    }
+    return `<polygon points="${pts.join(' ')}" fill="${fill}"/>`;
+  }
+
+  function renderBoard() {
+    // Corners nobody is playing are drawn without a color.
+    const cols = G.seats.map((s, k) => active(k) ? s.color : UNUSED);
+    let h = `<rect width="15" height="15" fill="var(--cell)"/>`;
+    BASE_ORIGIN.forEach(([R, C], s) => {
+      const c = cols[s], light = mix(c, '#ffffff', .55);
+      h += `<rect x="${C}" y="${R}" width="6" height="6" fill="${c}"/>`;
+      h += `<rect x="${C + .8}" y="${R + .8}" width="4.4" height="4.4" rx=".6" fill="var(--cell)"/>`;
+      if (active(s)) SLOTS.forEach(([dx, dy]) => {
+        h += `<circle cx="${C + dx}" cy="${R + dy}" r=".68" fill="${light}" stroke="${c}" stroke-width=".08"/>`;
+      });
+    });
+    TRACK.forEach(([r, c], k) => {
+      const st = START.indexOf(k), used = st >= 0 && active(st);
+      h += `<rect x="${c}" y="${r}" width="1" height="1" fill="${used ? cols[st] : 'var(--cell)'}" stroke="var(--grid)" stroke-width=".04"/>`;
+      if (used) h += starPoly(c + .5, r + .5, 'rgba(255,255,255,.85)');
+      else if (SAFE.has(k)) h += starPoly(c + .5, r + .5, 'var(--star)');
+    });
+    HOME_COL.forEach((cells, s) => cells.forEach(([r, c]) => {
+      h += `<rect x="${c}" y="${r}" width="1" height="1" fill="${active(s) ? cols[s] : 'var(--cell)'}" stroke="var(--grid)" stroke-width=".04"/>`;
+    }));
+    const tri = [['6,6 6,9 7.5,7.5'], ['6,6 9,6 7.5,7.5'], ['9,6 9,9 7.5,7.5'], ['6,9 9,9 7.5,7.5']];
+    tri.forEach(([pts], s) => { h += `<polygon points="${pts}" fill="${cols[s]}" stroke="#fff" stroke-width=".05"/>`; });
+    $('boardSvg').innerHTML = h;
+    document.querySelectorAll('#logo i').forEach((el, k) => { el.style.background = cols[[0, 1, 3, 2][k]]; });
+  }
+
+  // =====================================================================
+  //  Rendering: tokens
+  // =====================================================================
+  const tokenEls = [[], [], [], []];
+  function buildTokens() {
+    const wrap = $('tokens');
+    wrap.innerHTML = '';
+    for (let s = 0; s < 4; s++) {
+      const c = G.seats[s].color;
+      for (let i = 0; i < 4; i++) {
+        const el = document.createElement('div');
+        el.className = 'token';
+        el.dataset.s = s; el.dataset.i = i;
+        el.style.setProperty('--c', c);
+        el.style.setProperty('--c-light', mix(c, '#ffffff', .6));
+        el.style.setProperty('--c-dark', mix(c, '#000000', .38));
+        el.innerHTML = `<span class="pawn"><span class="num">${i + 1}</span></span>`;
+        el.hidden = !active(s);
+        wrap.appendChild(el);
+        tokenEls[s][i] = el;
+      }
+    }
+  }
+
+  function spotOf(s, i, p) {
+    if (p < 0) {
+      const [R, C] = BASE_ORIGIN[s], [dx, dy] = SLOTS[i];
+      return { x: C + dx, y: R + dy, key: `b${s}${i}` };
+    }
+    if (p <= LAST_TRACK) {
+      const sq = absOf(s, p), [r, c] = TRACK[sq];
+      return { x: c + .5, y: r + .5, key: 't' + sq };
+    }
+    if (p < GOAL) {
+      const [r, c] = HOME_COL[s][p - 51];
+      return { x: c + .5, y: r + .5, key: `h${s}-${p}` };
+    }
+    const [x, y] = FINISH[s];
+    return { x, y, key: 'f' + s, finished: true };
+  }
+
+  const STACK = {
+    1: [[0, 0]],
+    2: [[-22, -22], [22, 22]],
+    3: [[-24, -20], [24, -20], [0, 24]],
+    4: [[-24, -24], [24, -24], [-24, 24], [24, 24]],
+  };
+
+  function layoutTokens() {
+    const groups = {};
+    const spots = [];
+    for (let s = 0; s < 4; s++) {
+      if (!active(s)) continue;
+      for (let i = 0; i < 4; i++) {
+        const sp = spotOf(s, i, G.tokens[s][i]);
+        spots.push([s, i, sp]);
+        (groups[sp.key] = groups[sp.key] || []).push([s, i]);
+      }
+    }
+    const cur = G.phase === 'over' ? -1 : acting(G.current);
+    for (const [s, i, sp] of spots) {
+      const el = tokenEls[s][i], g = groups[sp.key], n = g.length;
+      const k = g.findIndex(([a, b]) => a === s && b === i);
+      const pattern = STACK[Math.min(n, 4)];
+      const [ox, oy] = pattern[k % pattern.length];
+      const sc = sp.finished ? .5 : n > 1 ? .68 : 1;
+      el.style.left = (sp.x / 15 * 100) + '%';
+      el.style.top = (sp.y / 15 * 100) + '%';
+      el.style.setProperty('--tx', (sp.finished ? ox * 1.3 : ox) + '%');
+      el.style.setProperty('--ty', (sp.finished ? oy * 1.3 : oy) + '%');
+      el.style.setProperty('--sc', sc);
+      el.classList.toggle('front', s === cur);
+    }
+  }
+
+  function setMovable(list) {
+    tokenEls.forEach(row => row.forEach(el => el.classList.remove('movable')));
+    if (!list) return;
+    const a = acting(G.current);
+    list.forEach(i => tokenEls[a][i].classList.add('movable'));
+  }
+
+  function hop(s, i) {
+    if (reduceMotion) return;
+    tokenEls[s][i].querySelector('.pawn').animate(
+      [{ transform: 'translateY(0)' }, { transform: 'translateY(-32%) scale(1.1)' }, { transform: 'translateY(0)' }],
+      { duration: STEP_MS - 10, easing: 'ease-out' });
+  }
+
+  // =====================================================================
+  //  Rendering: dice and panel
+  // =====================================================================
+  const FACES = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+  function showDie(v) {
+    const die = $('die');
+    if (!v) { die.innerHTML = '<span class="q">?</span>'; return; }
+    die.innerHTML = Array.from({ length: 9 }, (_, k) => `<span class="pip${FACES[v].includes(k) ? ' on' : ''}"></span>`).join('');
+  }
+
+  async function animateDie() {
+    const die = $('die');
+    die.classList.remove('rolling');
+    void die.offsetWidth;
+    die.classList.add('rolling');
+    const frames = reduceMotion ? 1 : 8;
+    for (let k = 0; k < frames; k++) { showDie(1 + Math.floor(Math.random() * 6)); await sleep(65); }
+    die.classList.remove('rolling');
+  }
+
+  function setMsg(text) { G.msg = text; $('msg').textContent = text; }
+
+  function renderPanel() {
+    const s = G.current, color = G.seats[s].color;
+    const humanRoll = G.phase === 'roll' && !busy && !isAI(s);
+    $('turnChip').style.background = color;
+    $('turnName').textContent = G.phase === 'over' ? 'Game over' : `${nameOf(s)}'s turn`;
+    const die = $('die');
+    die.style.setProperty('--die-c', color);
+    die.disabled = !humanRoll;
+    die.classList.toggle('ready', humanRoll);
+    showDie(G.dice);
+
+    let hint = '';
+    if (G.phase === 'over') hint = '<strong>Game over</strong>Start a new game to play again.';
+    else if (isAI(s)) hint = `<strong>Computer's turn</strong>${esc(TYPES[G.seats[s].type])}`;
+    else if (G.phase === 'roll') hint = '<strong>Tap the die</strong>or press Space to roll';
+    else if (G.phase === 'move') hint = '<strong>Pick a token</strong>Highlighted tokens can move';
+    else hint = '<strong>Moving…</strong>';
+    if (G.team && acting(s) !== s && G.phase !== 'over') hint += `<br>Moving ${esc(nameOf(acting(s)))}'s tokens`;
+    $('diceHint').innerHTML = hint;
+    $('msg').textContent = G.msg;
+
+    $('players').innerHTML = [0, 1, 2, 3].filter(active).map(p => {
+      const t = G.tokens[p];
+      const home = t.filter(x => x === GOAL).length;
+      const prog = t.reduce((a, x) => a + Math.max(0, x), 0) / (GOAL * 4) * 100;
+      const team = G.team ? `<span class="tag">Team ${p % 2 ? 'B' : 'A'}</span>` : '';
+      return `<li class="player${p === s && G.phase !== 'over' ? ' current' : ''}" style="--pc:${G.seats[p].color}">
+        <span class="chip" style="background:${G.seats[p].color}"></span>
+        <div><div class="name">${esc(G.seats[p].name)}</div><div class="meta">${esc(TYPES[G.seats[p].type])} · ${home}/4 home</div></div>
+        ${team}
+        <div class="bar"><i style="width:${prog.toFixed(1)}%"></i></div>
+      </li>`;
+    }).join('');
+
+    $('btnSave').disabled = busy || G.phase === 'anim' || G.phase === 'over';
+  }
+
+  function renderAll() {
+    renderBoard();
+    buildTokens();
+    layoutTokens();
+    renderPanel();
+  }
+
+  // =====================================================================
+  //  Turn flow
+  // =====================================================================
+  function later(fn, ms) {
+    const my = gid;
+    setTimeout(() => { if (my === gid) fn(); }, ms);
+  }
+
+  function startTurn(isNewTurn) {
+    if (isNewTurn) { G.turns++; G.turnsBy[G.current]++; }
+    G.phase = 'roll';
+    setMovable(null);
+    layoutTokens();
+    renderPanel();
+    if (isAI(G.current)) later(roll, AI_ROLL_MS);
+  }
+
+  function nextPlayer() {
+    G.sixes = 0;
+    G.dice = null;
+    let n = G.current;
+    do { n = (n + 1) % 4; } while (!active(n));
+    G.current = n;
+    startTurn(true);
+  }
+
+  async function roll() {
+    if (!G || G.phase !== 'roll' || busy) return;
+    busy = true;
+    const my = gid;
+    renderPanel();
+    sfx.roll();
+    await animateDie();
+    if (my !== gid) return;
+
+    const d = 1 + Math.floor(Math.random() * 6);
+    const s = G.current, who = nameOf(s);
+    G.dice = d;
+    G.sixes = d === 6 ? G.sixes + 1 : 0;
+    if (d === 6) sfx.six();
+    busy = false;
+
+    if (G.sixes === 3) {
+      setMsg(`${who} rolled three 6s in a row, so the turn passes.`);
+      renderPanel();
+      later(nextPlayer, 1200);
+      return;
+    }
+
+    const a = acting(s);
+    const moves = legalMoves(G.tokens, a, d);
+    if (!moves.length) {
+      setMsg(d === 6 ? `${who} rolled a 6 but can't move. Roll again.` : `${who} rolled a ${d}. No move possible.`);
+      renderPanel();
+      later(() => (d === 6 ? startTurn(false) : nextPlayer()), 1000);
+      return;
+    }
+
+    G.phase = 'move';
+    const onlyOneChoice = new Set(moves.map(i => G.tokens[a][i])).size === 1;
+    if (isAI(s)) {
+      setMsg(`${who} rolled a ${d}.`);
+      renderPanel();
+      later(() => doMove(aiChoose(a, d, moves, G.seats[s].type)), AI_MOVE_MS);
+    } else if (onlyOneChoice) {
+      setMsg(`${who} rolled a ${d}.`);
+      renderPanel();
+      later(() => doMove(moves[0]), 380);
+    } else {
+      setMsg(`${who} rolled a ${d}. Choose a token to move.`);
+      setMovable(moves);
+      renderPanel();
+    }
+  }
+
+  async function doMove(i) {
+    if (!G || G.phase !== 'move' || busy) return;
+    const s = G.current, a = acting(s), d = G.dice;
+    if (!legalMoves(G.tokens, a, d).includes(i)) return;
+    busy = true;
+    G.phase = 'anim';
+    setMovable(null);
+    renderPanel();
+    const my = gid;
+
+    const sim = simulate(G.tokens, a, i, d);
+    if (sim.from < 0) {
+      G.tokens[a][i] = 0;
+      sfx.enter();
+      layoutTokens(); hop(a, i);
+      await sleep(STEP_MS * 2);
+    } else {
+      for (let k = 1; k <= d; k++) {
+        G.tokens[a][i] = sim.from + k;
+        sfx.step(k);
+        layoutTokens(); hop(a, i);
+        await sleep(STEP_MS);
+        if (my !== gid) return;
+      }
+    }
+    if (my !== gid) return;
+
+    if (sim.captured.length) {
+      sim.captured.forEach(([o, j]) => { G.tokens[o][j] = -1; tokenEls[o][j].classList.add('flying'); });
+      sfx.capture();
+      layoutTokens();
+      await sleep(reduceMotion ? 100 : 650);
+      if (my !== gid) return;
+      sim.captured.forEach(([o, j]) => tokenEls[o][j].classList.remove('flying'));
+    }
+    if (sim.to === GOAL) sfx.home();
+    busy = false;
+
+    const winners = findWinners();
+    if (winners) return endGame(winners);
+
+    const who = nameOf(s);
+    if (sim.captured.length) {
+      const victims = [...new Set(sim.captured.map(([o]) => nameOf(o)))].join(' and ');
+      setMsg(`${who} captured ${victims}! Roll again.`);
+      startTurn(false);
+    } else if (sim.to === GOAL) {
+      setMsg(`${who} brought a token home! Roll again.`);
+      startTurn(false);
+    } else if (d === 6) {
+      setMsg(`${who} rolled a 6, so they roll again.`);
+      startTurn(false);
+    } else {
+      setMsg('');
+      nextPlayer();
+    }
+  }
+
+  function findWinners() {
+    if (G.team) {
+      for (const team of [[0, 2], [1, 3]]) if (team.every(s => allHome(G.tokens, s))) return team;
+      return null;
+    }
+    for (let s = 0; s < 4; s++) if (active(s) && allHome(G.tokens, s)) return [s];
+    return null;
+  }
+
+  function endGame(winners) {
+    G.phase = 'over';
+    G.winner = winners;
+    G.dice = null;
+    setMovable(null);
+    const names = winners.map(nameOf).join(' & ');
+    setMsg(`${names} ${winners.length > 1 ? 'win' : 'wins'} the game!`);
+    winners.forEach(s => tokenEls[s].forEach(el => el.classList.add('winner')));
+    layoutTokens();
+    renderPanel();
+    recordStats(winners);
+    sfx.win();
+    celebrate(winners.map(s => G.seats[s].color));
+    $('winTitle').textContent = winners.length > 1 ? `Team ${names} win!` : `${names} wins!`;
+    $('winSub').textContent = `Finished in ${G.turns} turns.`;
+    later(() => $('winDlg').showModal(), 900);
+  }
+
+  // =====================================================================
+  //  New game / save / load
+  // =====================================================================
+  function startGame(cfg) {
+    gid++;
+    busy = false;
+    G = newState(cfg);
+    renderAll();
+    setMsg('Roll a 6 to bring a token out of its base.');
+    startTurn(true);
+  }
+
+  function saveGame() {
+    if (!G || busy || G.phase === 'anim' || G.phase === 'over') { toast("Can't save right now"); return; }
+    const ok = store.set('ludo-save', { savedAt: Date.now(), state: G });
+    toast(ok ? 'Game saved' : 'Saving failed (storage unavailable)');
+  }
+
+  function savedGame() {
+    const s = store.get('ludo-save', null);
+    return s && s.state && Array.isArray(s.state.tokens) ? s : null;
+  }
+
+  function loadGame() {
+    const saved = savedGame();
+    if (!saved) { toast('No saved game yet'); return false; }
+    gid++;
+    busy = false;
+    G = saved.state;
+    renderAll();
+    toast('Saved game loaded');
+    if (G.phase === 'move') {
+      const s = G.current, a = acting(s), moves = legalMoves(G.tokens, a, G.dice);
+      if (isAI(s)) later(() => doMove(aiChoose(a, G.dice, moves, G.seats[s].type)), AI_MOVE_MS);
+      else setMovable(moves);
+      renderPanel();
+    } else {
+      startTurn(false);
+    }
+    return true;
+  }
+
+  // =====================================================================
+  //  Statistics
+  // =====================================================================
+  function emptyStats() { return { games: 0, totalTurns: 0, teamGames: 0, players: {} }; }
+  function recordStats(winners) {
+    const st = store.get('ludo-stats', null) || emptyStats();
+    st.games++;
+    st.totalTurns += G.turns;
+    if (G.team) st.teamGames++;
+    for (let s = 0; s < 4; s++) {
+      if (!active(s)) continue;
+      const key = G.seats[s].name;
+      const rec = st.players[key] || { played: 0, wins: 0, turns: 0, color: G.seats[s].color };
+      rec.played++;
+      rec.turns += G.turnsBy[s];
+      rec.color = G.seats[s].color;
+      if (winners.includes(s)) rec.wins++;
+      st.players[key] = rec;
+    }
+    store.set('ludo-stats', st);
+  }
+
+  function openStats() {
+    const st = store.get('ludo-stats', null) || emptyStats();
+    $('stGames').textContent = st.games;
+    $('stAvg').textContent = st.games ? (st.totalTurns / st.games).toFixed(1) : '–';
+    $('stTeam').textContent = st.teamGames;
+    const rows = Object.entries(st.players).sort((a, b) => b[1].wins - a[1].wins || b[1].played - a[1].played);
+    $('stTable').innerHTML = rows.length ? `<table>
+      <thead><tr><th>Player</th><th class="n">Played</th><th class="n">Wins</th><th class="n">Win %</th><th class="n">Avg turns</th></tr></thead>
+      <tbody>${rows.map(([name, r]) => `<tr>
+        <td><span class="chip" style="display:inline-block;vertical-align:-3px;margin-right:6px;background:${esc(r.color)}"></span>${esc(name)}</td>
+        <td class="n">${r.played}</td><td class="n">${r.wins}</td>
+        <td class="n">${Math.round(r.wins / r.played * 100)}%</td>
+        <td class="n">${(r.turns / r.played).toFixed(1)}</td></tr>`).join('')}</tbody></table>`
+      : '<p class="empty">No completed games yet. Finish a game to see statistics.</p>';
+    $('statsDlg').showModal();
+  }
+
+  // =====================================================================
+  //  Celebration
+  // =====================================================================
+  function celebrate(colors) {
+    if (reduceMotion) return;
+    const cv = $('confetti'), ctx = cv.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const W = innerWidth, H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const palette = [...colors, '#ffffff', '#ffd54f', ...colors];
+    const parts = [];
+    for (let k = 0; k < 220; k++) {
+      const fromLeft = k % 2 === 0;
+      parts.push({
+        x: fromLeft ? -10 : W + 10, y: H * (.55 + Math.random() * .3),
+        vx: (fromLeft ? 1 : -1) * (4 + Math.random() * 9), vy: -(9 + Math.random() * 11),
+        w: 6 + Math.random() * 6, h: 8 + Math.random() * 10,
+        rot: Math.random() * 6, vr: (Math.random() - .5) * .35,
+        color: palette[k % palette.length],
+      });
+    }
+    const t0 = performance.now();
+    function frame(now) {
+      const el = now - t0;
+      ctx.clearRect(0, 0, W, H);
+      for (const p of parts) {
+        p.vy += .28; p.vx *= .99; p.vy *= .99;
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(0, 1 - Math.max(0, el - 3200) / 1000);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.rot * 2)));
+        ctx.restore();
+      }
+      if (el < 4200) requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // =====================================================================
+  //  Setup dialog
+  // =====================================================================
+  let draft = null;
+  const presetName = hex => (PRESETS.find(p => p.hex.toLowerCase() === hex.toLowerCase()) || {}).name;
+
+  // Make a config consistent with its player count (also upgrades configs saved before counts existed).
+  function normalizeConfig(cfg) {
+    if (![2, 3, 4].includes(cfg.count)) {
+      const n = cfg.seats.filter(s => s.type !== 'off').length;
+      cfg.count = Math.min(4, Math.max(2, n));
+    }
+    const used = SEATS_FOR[cfg.count];
+    cfg.seats.forEach((s, k) => {
+      if (!used.includes(k)) s.type = 'off';
+      else if (s.type === 'off') s.type = 'medium';
+    });
+    if (cfg.count !== 4) cfg.team = false;
+    return cfg;
+  }
+
+  const COUNT_NOTES = {
+    2: 'Two players use opposite corners. The other two corners and their colors are removed.',
+    3: 'Three players use the top-left, top-right and bottom-right corners. The bottom-left corner is removed.',
+    4: 'All four corners play. Turn on team mode below for 2 vs 2.',
+  };
+
+  function renderCount() {
+    document.querySelectorAll('#countGroup button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.count === draft.count)));
+    $('countNote').textContent = COUNT_NOTES[draft.count];
+    $('teamMode').disabled = draft.count !== 4;
+    $('teamMode').checked = draft.team;
+    $('teamToggle').classList.toggle('disabled', draft.count !== 4);
+  }
+
+  function openSetup() {
+    draft = normalizeConfig(clone(config));
+    renderCount();
+    $('setupError').textContent = '';
+    const saved = savedGame();
+    $('setupLoad').hidden = !saved;
+    if (saved) $('setupLoad').textContent = 'Load saved game (' + new Date(saved.savedAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) + ')';
+    renderSeats();
+    $('setupDlg').showModal();
+  }
+
+  function renderSeats() {
+    $('seats').innerHTML = draft.seats.map((seat, s) => seat.type === 'off' ? '' : `
+      <div class="seat" data-seat="${s}">
+        <div class="seat-title"><span class="chip" style="background:${seat.color}"></span>${SEAT_LABELS[s]}</div>
+        <input type="text" maxlength="16" value="${esc(seat.name)}" aria-label="${SEAT_LABELS[s]} player name" data-field="name">
+        <select aria-label="${SEAT_LABELS[s]} player type" data-field="type">
+          ${Object.entries(TYPES).filter(([k]) => k !== 'off').map(([k, v]) => `<option value="${k}"${k === seat.type ? ' selected' : ''}>${v}</option>`).join('')}
+        </select>
+        <div class="swatches" role="group" aria-label="${SEAT_LABELS[s]} color">
+          ${PRESETS.map(p => `<button type="button" class="sw" data-color="${p.hex}" title="${p.name}" aria-label="${p.name}"
+              aria-pressed="${p.hex.toLowerCase() === seat.color.toLowerCase()}" style="background:${p.hex}"></button>`).join('')}
+          <label class="custom-color" title="Custom color" style="${presetName(seat.color) ? '' : `background:${seat.color};border-style:solid`}">
+            <input type="color" value="${seat.color}" aria-label="Custom color" data-field="custom">
+            <span>${presetName(seat.color) ? '+' : ''}</span>
+          </label>
+        </div>
+      </div>`).join('');
+  }
+
+  function setSeatColor(s, hex) {
+    const seat = draft.seats[s];
+    const oldDefault = presetName(seat.color) || `Player ${s + 1}`;
+    if (seat.name === oldDefault) seat.name = presetName(hex) || `Player ${s + 1}`;
+    seat.color = hex;
+    renderSeats();
+  }
+
+  $('seats').addEventListener('click', e => {
+    const sw = e.target.closest('.sw');
+    if (!sw) return;
+    setSeatColor(+sw.closest('.seat').dataset.seat, sw.dataset.color);
+  });
+  $('seats').addEventListener('change', e => {
+    const row = e.target.closest('.seat'); if (!row) return;
+    const s = +row.dataset.seat, f = e.target.dataset.field;
+    if (f === 'type') { draft.seats[s].type = e.target.value; renderSeats(); }
+    if (f === 'custom') setSeatColor(s, e.target.value);
+  });
+  $('seats').addEventListener('input', e => {
+    const row = e.target.closest('.seat');
+    if (row && e.target.dataset.field === 'name') draft.seats[+row.dataset.seat].name = e.target.value;
+  });
+  $('teamMode').addEventListener('change', e => { draft.team = e.target.checked; });
+  $('countGroup').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    draft.count = +b.dataset.count;
+    normalizeConfig(draft);
+    $('setupError').textContent = '';
+    renderCount();
+    renderSeats();
+  });
+
+  function validate(cfg) {
+    cfg.seats.forEach((s, k) => { s.name = s.name.trim() || presetName(s.color) || `Player ${k + 1}`; });
+    const on = cfg.seats.filter(s => s.type !== 'off');
+    if (on.length < 2) return 'At least two seats need a player.';
+    if (cfg.team && on.length < 4) return 'Team mode needs all four seats filled.';
+    const colors = on.map(s => s.color.toLowerCase());
+    if (new Set(colors).size < colors.length) return 'Each player needs a different color.';
+    const names = on.map(s => s.name.toLowerCase());
+    if (new Set(names).size < names.length) return 'Each player needs a different name.';
+    return '';
+  }
+
+  $('setupStart').addEventListener('click', () => {
+    const err = validate(draft);
+    if (err) { $('setupError').textContent = err; renderSeats(); return; }
+    config = clone(draft);
+    store.set('ludo-config', config);
+    $('setupDlg').close();
+    startGame(config);
+  });
+  $('setupCancel').addEventListener('click', () => $('setupDlg').close());
+  $('setupLoad').addEventListener('click', () => { $('setupDlg').close(); loadGame(); });
+
+  // =====================================================================
+  //  Wiring
+  // =====================================================================
+  $('btnNew').addEventListener('click', openSetup);
+  $('btnSave').addEventListener('click', saveGame);
+  $('btnLoad').addEventListener('click', loadGame);
+  $('btnStats').addEventListener('click', openStats);
+  $('btnRules').addEventListener('click', () => $('rulesDlg').showModal());
+  $('rulesClose').addEventListener('click', () => $('rulesDlg').close());
+  function renderSoundBtn() {
+    $('btnSound').textContent = sfx.on ? '🔊' : '🔇';
+    $('btnSound').setAttribute('aria-label', sfx.on ? 'Sound on' : 'Sound off');
+  }
+  $('btnSound').addEventListener('click', () => { sfx.on = !sfx.on; renderSoundBtn(); if (sfx.on) sfx.step(3); });
+
+  $('statsClose').addEventListener('click', () => $('statsDlg').close());
+  $('statsReset').addEventListener('click', () => {
+    if (!confirm('Reset all statistics? This cannot be undone.')) return;
+    store.del('ludo-stats');
+    $('statsDlg').close();
+    openStats();
+  });
+  $('winAgain').addEventListener('click', () => { $('winDlg').close(); startGame(config); });
+  $('winSetup').addEventListener('click', () => { $('winDlg').close(); openSetup(); });
+  $('winStats').addEventListener('click', () => { $('winDlg').close(); openStats(); });
+
+  $('die').addEventListener('click', () => { sfx.unlock(); if (!isAI(G.current)) roll(); });
+  $('tokens').addEventListener('click', e => {
+    const el = e.target.closest('.token');
+    if (!el || !el.classList.contains('movable')) return;
+    doMove(+el.dataset.i);
+  });
+
+  document.addEventListener('keydown', e => {
+    if (document.querySelector('dialog[open]')) return;
+    if (e.target.matches('input, select, textarea')) return;
+    if (e.target.matches('button') && (e.key === ' ' || e.key === 'Enter')) return;  // let the focused button handle it
+    if ((e.key === ' ' || e.key === 'Enter') && G.phase === 'roll' && !isAI(G.current)) {
+      e.preventDefault();
+      sfx.unlock();
+      roll();
+    } else if (e.key >= '1' && e.key <= '4' && G.phase === 'move' && !isAI(G.current)) {
+      const i = Number(e.key) - 1;
+      if (tokenEls[acting(G.current)][i].classList.contains('movable')) doMove(i);
+    }
+  });
+  document.addEventListener('pointerdown', () => sfx.unlock(), { once: true });
+
+  // =====================================================================
+  //  Boot
+  // =====================================================================
+  renderSoundBtn();
+  config = normalizeConfig(config);
+  if (validate(config)) config = clone(DEFAULT_CONFIG);
+  startGame(config);
+  openSetup();
+})();
+</script>
+</body>
+</html>
