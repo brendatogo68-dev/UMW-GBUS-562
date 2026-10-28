@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# API keys and secrets (never commit)
+API-KEY.txt
+API-key.txt
+*api-key*
+*API-KEY*
