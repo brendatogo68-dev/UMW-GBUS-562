@@ -12,3 +12,4 @@ Materials are organized into weekly folders (for example, `Week-01`, `Week-02`, 
 1. [Week-01](Week-01/): two single-page browser games built with HTML and JavaScript.
    - **Connect Four**: play against a computer opponent that uses a minimax search with alpha-beta pruning (Easy, Medium or Hard), or switch to 2 Players to take turns on the same device.
    - **Ludo**: a modern take on the classic board game for 2–4 players, human or computer. Computer opponents come in three difficulty levels (Easy, Medium or Hard) and play strategically around token captures. Includes animated dice rolls and moves, save and load, customizable player names and colors, and an optional 2 vs 2 team mode.
+2. [Week-02](Week-02/): a Prompt Lab web app for testing prompts against Claude, built with Claude Code.
