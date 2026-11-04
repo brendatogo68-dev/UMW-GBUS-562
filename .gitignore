@@ -224,3 +224,6 @@ API-KEY.txt
 API-key.txt
 *api-key*
 *API-KEY*
+
+# Week-03 RAG tool: local Chroma database (rebuild with ask.py --rebuild)
+Week-03/chroma-db/

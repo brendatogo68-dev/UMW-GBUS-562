@@ -16,3 +16,4 @@ Materials are organized into weekly folders (for example, `Week-01`, `Week-02`, 
    - **Prompt Lab** (`prompt-lab.html`): a single-file browser app that sends prompts to Claude Sonnet 5 through the Anthropic API, keeps a labeled conversation log, and exports conversations as Markdown.
    - **Prompt runs** (`runs/task-1.md` – `runs/task-4.md`): exported conversations for four Wildframe Coffee Roasters tasks.
    - **Write-up** (`writeup.md`): explains the four prompting techniques used (zero-shot, one-shot, few-shot and chain-of-thought) and reflects on the results.
+3. [Week-03](Week-03/): a RAG tool that answers questions from Copperline Manufacturing's finance documents, built with Claude Code.

@@ -33,3 +33,9 @@ This is coursework for **GBUS 562: AI Language Models** at the University of Mar
 
 - Default to the latest, most capable Claude models (currently the Claude 5 family, e.g. `claude-opus-5-5`).
 - Prefer the official Anthropic SDK (`anthropic` for Python, `@anthropic-ai/sdk` for JavaScript).
+
+## Python environment
+
+- Always use the `.venv` virtual environment at the top of this repository for running Python and installing packages (Python 3.13).
+- Run Python with `.venv\Scripts\python.exe` and install packages with `.venv\Scripts\python.exe -m pip install <package>`. Never use the system Python or install packages globally.
+- `.venv` is listed in `.gitignore` and must never be committed.
