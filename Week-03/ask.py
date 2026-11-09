@@ -1,11 +1,14 @@
-"""Ask questions about Copperline Manufacturing's finance documents (RAG with Chroma + Claude).
+"""Ask questions about a folder of documents (RAG with Chroma + Claude).
 
 Usage (from the top of the repository):
     .venv\\Scripts\\python.exe Week-03\\ask.py "What is the hotel limit in Boston?"
+    .venv\\Scripts\\python.exe Week-03\\ask.py "question" --docs Week-03\\larkfield-docs
+    .venv\\Scripts\\python.exe Week-03\\ask.py "question" --save Week-03\\runs\\q1.txt
     .venv\\Scripts\\python.exe Week-03\\ask.py              # ask questions one after another
     .venv\\Scripts\\python.exe Week-03\\ask.py --rebuild    # re-read the documents after adding or removing files
 
-The documents live in Week-03/copperline-docs. Supported file types: HTML, PDF, Markdown,
+The documents default to Week-03/copperline-docs; --docs picks another folder, and each folder
+gets its own Chroma database under Week-03/chroma-db. Supported file types: HTML, PDF, Markdown,
 plain text and Word (.docx). Each document is split into one chunk per section heading,
 and every chunk starts with its document title and section heading.
 """
@@ -19,12 +22,14 @@ from collections import Counter
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DOCS_DIR = SCRIPT_DIR / "copperline-docs"
-DB_DIR = SCRIPT_DIR / "chroma-db"
+REPO_DIR = SCRIPT_DIR.parent
+DEFAULT_DOCS = SCRIPT_DIR / "copperline-docs"
+# One database per document folder lives in here (kept out of Git by .gitignore).
+DB_ROOT = SCRIPT_DIR / "chroma-db"
 # The key file sits in the folder that contains the repository, outside Git.
-KEY_FILE = SCRIPT_DIR.parent.parent / "API-Key.txt"
+KEY_FILE = REPO_DIR.parent / "API-Key.txt"
 
-COLLECTION = "copperline_docs"
+COLLECTION = "documents"
 MODEL = "claude-sonnet-5"
 TOP_K = 4
 PREVIEW_CHARS = 150
@@ -36,29 +41,32 @@ SUPPORTED = {".html", ".htm", ".pdf", ".md", ".markdown", ".txt", ".docx"}
 
 # Some sections rely on a definition that appears in a different section of the same
 # document. These notes are added to those chunks so they make sense on their own.
-# Keys are file names, then section headings.
+# Keys are document folder names, then file names, then section headings.
 CONTEXT_NOTES = {
-    "travel-expense-policy.html": {
-        "Hotels": "Tier 1 cities are New York, San Francisco, Boston, Chicago, Washington DC, "
-                  "Los Angeles, and Seattle. Tier 2 cities are every other city in the United States.",
-    },
-    "month-end-close-calendar.html": {
-        heading: "Deadlines are counted in business days. Business day 1 is the first business day "
-                 "of the new month. Business day minus 1 is the last business day of the month being closed."
-        for heading in (
-            "Deadlines for all employees before month end",
-            "Accounts Payable cutoff",
-            "Accruals for goods and services not yet invoiced",
-            "Controller's Office close tasks",
-        )
+    "copperline-docs": {
+        "travel-expense-policy.html": {
+            "Hotels": "Tier 1 cities are New York, San Francisco, Boston, Chicago, Washington DC, "
+                      "Los Angeles, and Seattle. Tier 2 cities are every other city in the United States.",
+        },
+        "month-end-close-calendar.html": {
+            heading: "Deadlines are counted in business days. Business day 1 is the first business day "
+                     "of the new month. Business day minus 1 is the last business day of the month being closed."
+            for heading in (
+                "Deadlines for all employees before month end",
+                "Accounts Payable cutoff",
+                "Accruals for goods and services not yet invoiced",
+                "Controller's Office close tasks",
+            )
+        },
     },
 }
 
-SYSTEM_PROMPT = """You answer employees' questions about Copperline Manufacturing's finance documents.
+SYSTEM_PROMPT = """You answer employees' questions about their organization's documents.
 
 Rules:
 - Answer only from the sources in the user's message. Do not use outside knowledge or make assumptions beyond what the sources say.
 - After every fact, cite the source file it came from in square brackets, for example [travel-expense-policy.html].
+- Apply the sources to the exact situation in the question. When a detail in the question decides which rule applies (for example, how or where something was deposited, paid, or reported), use that detail as given and apply only the rule that matches it; do not answer for a different situation instead. Lead with the answer for the question's situation, and state any assumptions you had to make, such as timing.
 - If the sources do not contain the answer, say plainly that the documents provided do not cover it. If they answer only part of the question, answer that part and say which part is not covered.
 - Keep the answer short and direct."""
 
@@ -302,10 +310,10 @@ def split_blocks(blocks):
     return parts
 
 
-def chunk_document(path):
+def chunk_document(path, docs_dir):
     title, doc_info, sections = READERS[path.suffix.lower()](path)
-    rel = path.relative_to(DOCS_DIR).as_posix()
-    notes = CONTEXT_NOTES.get(path.name, {})
+    rel = path.relative_to(docs_dir).as_posix()
+    notes = CONTEXT_NOTES.get(docs_dir.name, {}).get(path.name, {})
     chunks = []
     for section in sections:
         blocks = [b for b in section["blocks"] if b.strip()]
@@ -335,33 +343,50 @@ def chunk_document(path):
     return chunks
 
 
-def document_files():
+def document_files(docs_dir):
     files, skipped = [], []
-    for path in sorted(DOCS_DIR.rglob("*")):
+    for path in sorted(docs_dir.rglob("*")):
         if not path.is_file() or path.name.startswith((".", "~$")):
             continue
         (files if path.suffix.lower() in SUPPORTED else skipped).append(path)
     return files, skipped
 
 
-def fingerprint(files):
+def fingerprint(files, docs_dir):
     """A hash of the document names, sizes and modification times, used to spot changes."""
     h = hashlib.sha256()
     for path in files:
         stat = path.stat()
-        h.update(f"{path.relative_to(DOCS_DIR).as_posix()}|{stat.st_size}|{stat.st_mtime_ns}\n".encode())
+        h.update(f"{path.relative_to(docs_dir).as_posix()}|{stat.st_size}|{stat.st_mtime_ns}\n".encode())
     return h.hexdigest()
+
+
+def resolve_docs_dir(value):
+    """Accept the folder relative to the current directory or to the top of the repository."""
+    if value is None:
+        return DEFAULT_DOCS
+    for candidate in (Path(value), REPO_DIR / value):
+        if candidate.is_dir():
+            return candidate.resolve()
+    sys.exit(f"Document folder not found: {value}")
 
 
 # ---------------------------------------------------------------------------
 # Chroma database
 # ---------------------------------------------------------------------------
 
-def open_client():
+def db_path(docs_dir):
+    """Each document folder gets its own database, named after the folder plus a short hash
+    of its full path so two folders with the same name never share one."""
+    path_hash = hashlib.sha256(str(docs_dir).lower().encode()).hexdigest()[:8]
+    return DB_ROOT / f"{docs_dir.name}-{path_hash}"
+
+
+def open_client(docs_dir):
     import chromadb
     from chromadb.config import Settings
 
-    return chromadb.PersistentClient(path=str(DB_DIR), settings=Settings(anonymized_telemetry=False))
+    return chromadb.PersistentClient(path=str(db_path(docs_dir)), settings=Settings(anonymized_telemetry=False))
 
 
 def embedding_function():
@@ -370,17 +395,17 @@ def embedding_function():
     return embedding_functions.DefaultEmbeddingFunction()
 
 
-def build_database(client):
-    files, skipped = document_files()
+def build_database(client, docs_dir):
+    files, skipped = document_files(docs_dir)
     for path in skipped:
-        print(f"  Skipping {path.relative_to(DOCS_DIR).as_posix()} (unsupported file type)")
+        print(f"  Skipping {path.relative_to(docs_dir).as_posix()} (unsupported file type)")
     if not files:
-        sys.exit(f"No supported documents found in {DOCS_DIR}")
+        sys.exit(f"No supported documents found in {docs_dir}")
 
     chunks = []
     for path in files:
-        doc_chunks = chunk_document(path)
-        print(f"  {path.relative_to(DOCS_DIR).as_posix()}: {len(doc_chunks)} chunks")
+        doc_chunks = chunk_document(path, docs_dir)
+        print(f"  {path.relative_to(docs_dir).as_posix()}: {len(doc_chunks)} chunks")
         chunks.extend(doc_chunks)
 
     try:
@@ -390,28 +415,29 @@ def build_database(client):
     collection = client.create_collection(
         COLLECTION,
         embedding_function=embedding_function(),
-        metadata={"hnsw:space": "cosine", "fingerprint": fingerprint(files)},
+        metadata={"hnsw:space": "cosine", "fingerprint": fingerprint(files, docs_dir)},
     )
     collection.add(
         ids=[c["id"] for c in chunks],
         documents=[c["text"] for c in chunks],
         metadatas=[c["metadata"] for c in chunks],
     )
-    print(f"Database built: {len(chunks)} chunks from {len(files)} documents in {DB_DIR.name}/\n")
+    db = db_path(docs_dir).relative_to(SCRIPT_DIR).as_posix()
+    print(f"Database built: {len(chunks)} chunks from {len(files)} documents in {db}/\n")
     return collection
 
 
-def get_collection(client, rebuild):
+def get_collection(client, docs_dir, rebuild):
     if rebuild:
-        print(f"Rebuilding the database from {DOCS_DIR.name}/ ...")
-        return build_database(client)
+        print(f"Rebuilding the database from {docs_dir.name}/ ...")
+        return build_database(client, docs_dir)
     try:
         collection = client.get_collection(COLLECTION, embedding_function=embedding_function())
     except Exception:
-        print(f"No database yet. Building it from {DOCS_DIR.name}/ ...")
-        return build_database(client)
-    files, _ = document_files()
-    if (collection.metadata or {}).get("fingerprint") != fingerprint(files):
+        print(f"No database yet. Building it from {docs_dir.name}/ ...")
+        return build_database(client, docs_dir)
+    files, _ = document_files(docs_dir)
+    if (collection.metadata or {}).get("fingerprint") != fingerprint(files, docs_dir):
         print("Note: documents were added, removed or changed since the database was built.")
         print("      Run with --rebuild to include the changes.\n")
     return collection
@@ -463,42 +489,59 @@ def ask_claude(client, question, hits):
     return answer or "(Claude returned no text.)"
 
 
-def answer_question(collection, claude, question):
+def answer_question(collection, claude, question, save_to=None):
     import anthropic
 
     hits = retrieve(collection, question)
-    print(f"\nTop {len(hits)} chunks:")
+    chunk_lines = []
     for rank, hit in enumerate(hits, start=1):
         preview = clean(hit["text"])[:PREVIEW_CHARS]
-        print(f"  {rank}. similarity {hit['similarity']:.3f} | {hit['meta']['source']}")
-        print(f"     {preview}...")
+        chunk_lines.append(f"{rank}. similarity {hit['similarity']:.3f} | {hit['meta']['source']}")
+        chunk_lines.append(f"   {preview}...")
+    print(f"\nTop {len(hits)} chunks:")
+    for line in chunk_lines:
+        print("  " + line)
 
-    print("\nAnswer:")
     try:
-        print(ask_claude(claude, question, hits))
+        answer = ask_claude(claude, question, hits)
     except anthropic.AuthenticationError:
-        print(f"Error: the API key was rejected. Check the key in {KEY_FILE}.")
+        answer = f"Error: the API key was rejected. Check the key in {KEY_FILE}."
     except anthropic.RateLimitError:
-        print("Error: rate limit reached. Wait a minute and try again.")
+        answer = "Error: rate limit reached. Wait a minute and try again."
     except anthropic.APIConnectionError:
-        print("Error: could not reach the Anthropic API. Check your internet connection.")
+        answer = "Error: could not reach the Anthropic API. Check your internet connection."
     except anthropic.APIStatusError as err:
-        print(f"Error from the Anthropic API (HTTP {err.status_code}): {err.message}")
+        answer = f"Error from the Anthropic API (HTTP {err.status_code}): {err.message}"
+    print("\nAnswer:")
+    print(answer)
     print()
+
+    if save_to:
+        save_to.parent.mkdir(parents=True, exist_ok=True)
+        save_to.write_text("\n".join(chunk_lines) + "\n\nANSWER\n" + answer + "\n", encoding="utf-8")
+        print(f"Saved to {save_to}")
 
 
 def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-    parser = argparse.ArgumentParser(description="Answer questions from Copperline's finance documents.")
+    parser = argparse.ArgumentParser(description="Answer questions from a folder of documents.")
     parser.add_argument("question", nargs="*", help="the question to ask (leave out to ask several in a row)")
+    parser.add_argument("--docs", metavar="FOLDER",
+                        help="document folder to use (default: Week-03/copperline-docs)")
+    parser.add_argument("--save", metavar="FILE",
+                        help="also save the retrieved chunks and the answer to this UTF-8 text file")
     parser.add_argument("--rebuild", action="store_true",
                         help="rebuild the database after adding or removing documents")
     args = parser.parse_args()
 
-    collection = get_collection(open_client(), args.rebuild)
+    docs_dir = resolve_docs_dir(args.docs)
     question = " ".join(args.question).strip()
+    if args.save and not question:
+        parser.error("--save needs a question on the command line")
+
+    collection = get_collection(open_client(docs_dir), docs_dir, args.rebuild)
     if args.rebuild and not question:
         return
 
@@ -506,9 +549,9 @@ def main():
     claude = anthropic.Anthropic(api_key=load_api_key())
 
     if question:
-        answer_question(collection, claude, question)
+        answer_question(collection, claude, question, Path(args.save) if args.save else None)
         return
-    print("Ask a question about the Copperline finance documents (press Enter on an empty line to quit).")
+    print(f"Ask a question about the documents in {docs_dir.name} (press Enter on an empty line to quit).")
     while True:
         try:
             question = input("\nQuestion: ").strip()
