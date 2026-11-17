@@ -29,11 +29,13 @@ This is coursework for **GBUS 562: AI Language Models** at the University of Mar
 - Before every commit, check the staged changes (`git diff --cached`) to confirm no key or secrets file is included.
 - Browser-only (HTML/JS) apps must not embed the key in client-side code, since anyone viewing the page could read it. Use a small local backend (for example Python) that holds the key instead.
 
-## Agent email file
+## Agent email and allowlist files
 
-- `C:\Users\Dell\Desktop\GBUS-562-Course\Agent-Email.txt` (in the folder above this repo) may be read by the user's programs at run time.
-- **Never open or read this file yourself** (no Read, cat, type, grep or any other tool on it).
-- Never write its contents to any file, and never copy it into this repo.
+- These files in the folder above this repo may be read by the user's programs at run time:
+  - `C:\Users\Dell\Desktop\GBUS-562-Course\Agent-Email.txt` (Gmail login)
+  - `C:\Users\Dell\Desktop\GBUS-562-Course\Agent-Allowlist.txt` (allowed senders; holds the user's real email addresses)
+- **Never open or read these files yourself** (no Read, cat, type, grep or any other tool on them).
+- Never write their contents to any file, and never copy them into this repo.
 
 ## Building with Claude
 

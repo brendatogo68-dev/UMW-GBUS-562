@@ -1,4 +1,4 @@
-"""Search the Hartwell Foods HR documents with a local Chroma database.
+"""Search an organization's HR documents with a local Chroma database.
 
 Adapted from Week-03/ask.py: the same file readers and section-based chunking (one chunk per
 section heading, each starting with its document title and section heading), and the same
@@ -7,6 +7,8 @@ MCP server:
 - Nothing is printed to stdout, because stdout carries the MCP protocol. Progress goes to stderr.
 - Page footers are dropped instead of becoming "Contact" chunks.
 - The database rebuilds itself when the documents change.
+- Works for any organization folder (hr-docs/, employees.csv, sample-emails/, system_prompt.txt);
+  each organization gets its own database in chroma-db/<folder name>/.
 """
 
 import hashlib
@@ -16,9 +18,30 @@ from collections import Counter
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DOCS_DIR = SCRIPT_DIR / "hartwell-hr" / "hr-docs"
-# Kept out of Git by .gitignore; delete it or call build_database() to rebuild.
-DB_DIR = SCRIPT_DIR / "chroma-db"
+DEFAULT_ORG_DIR = SCRIPT_DIR / "hartwell-hr"
+ORG_ITEMS = ("hr-docs", "employees.csv", "sample-emails", "system_prompt.txt")
+# One database per organization, in chroma-db/<organization folder name>/.
+# The whole chroma-db folder is kept out of Git by .gitignore; delete a subfolder to rebuild it.
+DB_ROOT = SCRIPT_DIR / "chroma-db"
+
+
+def resolve_org(org=None):
+    """Return the organization folder: a path, or a folder name inside Week-04. Default: hartwell-hr."""
+    if not org:
+        org_dir = DEFAULT_ORG_DIR
+    else:
+        candidate = Path(org)
+        org_dir = candidate if candidate.is_dir() else SCRIPT_DIR / org
+    org_dir = org_dir.resolve()
+    missing = [item for item in ORG_ITEMS if item != "sample-emails" and not (org_dir / item).exists()]
+    if not org_dir.is_dir() or missing:
+        raise SystemExit(f"Organization folder {org_dir} is missing: {', '.join(missing) or 'the folder itself'}. "
+                         f"It needs {', '.join(ORG_ITEMS)}.")
+    return org_dir
+
+
+def db_dir_for(org_dir):
+    return DB_ROOT / Path(org_dir).name
 
 COLLECTION = "hr_docs"
 # Chroma's built-in embedding model (all-MiniLM-L6-v2) only reads about the first 256 tokens
@@ -311,11 +334,12 @@ def fingerprint(files, docs_dir):
 # Chroma database
 # ---------------------------------------------------------------------------
 
-def open_client():
+def open_client(db_dir):
     import chromadb
     from chromadb.config import Settings
 
-    return chromadb.PersistentClient(path=str(DB_DIR), settings=Settings(anonymized_telemetry=False))
+    Path(db_dir).mkdir(parents=True, exist_ok=True)
+    return chromadb.PersistentClient(path=str(db_dir), settings=Settings(anonymized_telemetry=False))
 
 
 def embedding_function():
@@ -324,8 +348,10 @@ def embedding_function():
     return embedding_functions.DefaultEmbeddingFunction()
 
 
-def build_database(client=None, docs_dir=DOCS_DIR):
-    client = client or open_client()
+def build_database(org_dir=DEFAULT_ORG_DIR, client=None):
+    docs_dir = Path(org_dir) / "hr-docs"
+    db_dir = db_dir_for(org_dir)
+    client = client or open_client(db_dir)
     files, skipped = document_files(docs_dir)
     for path in skipped:
         log(f"  Skipping {path.relative_to(docs_dir).as_posix()} (unsupported file type)")
@@ -352,22 +378,23 @@ def build_database(client=None, docs_dir=DOCS_DIR):
         documents=[c["text"] for c in chunks],
         metadatas=[c["metadata"] for c in chunks],
     )
-    log(f"Database built: {len(chunks)} chunks from {len(files)} documents in {DB_DIR}")
+    log(f"Database built: {len(chunks)} chunks from {len(files)} documents in {db_dir}")
     return collection
 
 
-def open_collection(docs_dir=DOCS_DIR):
-    """Open the database, building it first if it is missing or the documents have changed."""
-    client = open_client()
+def open_collection(org_dir=DEFAULT_ORG_DIR):
+    """Open the organization's database, building it first if it is missing or the documents changed."""
+    docs_dir = Path(org_dir) / "hr-docs"
+    client = open_client(db_dir_for(org_dir))
     try:
         collection = client.get_collection(COLLECTION, embedding_function=embedding_function())
     except Exception:
-        log("No search database yet; building it.")
-        return build_database(client, docs_dir)
+        log(f"No search database for {Path(org_dir).name} yet; building it.")
+        return build_database(org_dir, client)
     files, _ = document_files(docs_dir)
     if (collection.metadata or {}).get("fingerprint") != fingerprint(files, docs_dir):
         log("HR documents changed since the last build; rebuilding the search database.")
-        return build_database(client, docs_dir)
+        return build_database(org_dir, client)
     return collection
 
 
