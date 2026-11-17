@@ -29,6 +29,12 @@ This is coursework for **GBUS 562: AI Language Models** at the University of Mar
 - Before every commit, check the staged changes (`git diff --cached`) to confirm no key or secrets file is included.
 - Browser-only (HTML/JS) apps must not embed the key in client-side code, since anyone viewing the page could read it. Use a small local backend (for example Python) that holds the key instead.
 
+## Agent email file
+
+- `C:\Users\Dell\Desktop\GBUS-562-Course\Agent-Email.txt` (in the folder above this repo) may be read by the user's programs at run time.
+- **Never open or read this file yourself** (no Read, cat, type, grep or any other tool on it).
+- Never write its contents to any file, and never copy it into this repo.
+
 ## Building with Claude
 
 - Default to the latest, most capable Claude models (currently the Claude 5 family, e.g. `claude-opus-5-5`).

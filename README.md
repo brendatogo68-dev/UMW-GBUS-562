@@ -21,3 +21,4 @@ Materials are organized into weekly folders (for example, `Week-01`, `Week-02`, 
    - **Documents** (`copperline-docs/`, `larkfield-docs/`): finance policies for Copperline Manufacturing and member-service policies for Larkfield Credit Union. Outdated versions are kept in the matching `-archive` folders so they are not indexed.
    - **Runs** (`runs/q1-before.txt` – `runs/q6.txt`): nine saved runs against the Larkfield documents, including before/after comparisons for removing an outdated fee schedule and for tightening Claude's instructions.
    - **Write-up** (`writeup.md`): what was built, the structure-based chunking approach, an example run, and a reflection on the outdated-document problem and an out-of-scope question.
+4. [Week-04](Week-04/): an AI agent that prepares replies to HR emails using tools from an MCP server, built with Claude Code.

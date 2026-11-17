@@ -227,3 +227,6 @@ API-key.txt
 
 # Week-03 RAG tool: local Chroma database (rebuild with ask.py --rebuild)
 Week-03/chroma-db/
+
+# Week-04 MCP server: local Chroma database (rebuild with hr_mcp_server.py --rebuild)
+Week-04/chroma-db/
