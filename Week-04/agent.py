@@ -702,7 +702,7 @@ def main():
             stream.reconfigure(encoding="utf-8", errors="replace")
         except AttributeError:
             pass
-    parser = argparse.ArgumentParser(description="Draft (and in --watch, send) replies to Hartwell Foods employee emails.")
+    parser = argparse.ArgumentParser(description="Draft (and in --watch, send) replies to employee HR emails for any organization (--org).")
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--email", help="path of one email file (.eml); the draft is saved to Week-04/drafts/")
     source.add_argument("--inbox", action="store_true",
@@ -725,6 +725,7 @@ def main():
     console_out, console_err = sys.stdout, sys.stderr
     log = None
     if args.save:
+        Path(args.save).parent.mkdir(parents=True, exist_ok=True)
         log = open(args.save, "w", encoding="utf-8")
         sys.stdout = Tee(console_out, log)
     try:

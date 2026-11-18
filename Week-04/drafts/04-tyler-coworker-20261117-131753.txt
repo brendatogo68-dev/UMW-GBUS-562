@@ -1,0 +1,18 @@
+STATUS: DRAFT - NOT SENT
+To: Tyler Reed <tyler.reed@ridgelinehotels.example>
+Subject: Re: Trip planning
+Needs human review: no
+Source email: 04-tyler-coworker.eml
+
+Hi Tyler,
+
+I'm sorry, but I can't share another team member's PTO balance, even with their permission — our system only allows me to look up your own leave information. Jenna would need to check her own balance directly (she can reach out to HR or her supervisor for that), and then you two can compare notes to pick dates that work for both of you.
+
+For reference, your own current balance is:
+- PTO days remaining: 11
+- Sick days remaining: 6
+
+Hope the trip planning goes smoothly!
+
+Best,
+HR Assistant

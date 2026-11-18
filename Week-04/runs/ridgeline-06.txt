@@ -1,0 +1,35 @@
+Sender: danielle.price@ridgelinehotels.example
+Subject: A guest
+Email: Week-04/ridgeline-hotels/sample-emails/06-danielle-guest.eml
+Organization: ridgeline-hotels
+Model: claude-sonnet-5
+
+Tools offered: search_policy, get_leave_balance, save_reply
+
+Step 1: save_reply
+  inputs: {"reply_text": "Hi Danielle,\n\nThank you for trusting us with this, and I'm very sorry you're going through this. What you're describing is serious, and you shouldn't have to just \"avoid the room\" or deal with this kind of treatment at work.\n\nI'm flagging this right away so that someone from our People and Culture team can personally follow up with you as soon as possible to discuss what's happened and the best next steps. You'll hear from a person directly rather than me, given the nature of this situation.\n\nIn the meantime, please take care of yourself, and don't hesitate to reach out if anything else happens.\n\nWarm regards,\nHR Assistant (on behalf of the People and Culture team)", "needs_human_review": true}
+  result: Draft saved to Week-04\drafts\06-danielle-guest-20261117-131823.txt. Nothing was sent.
+
+[Claude] I've drafted a reply to Danielle and flagged it for immediate human review, since this involves guest harassment and a safety concern that her supervisor dismissed. The draft acknowledges her situation with care, avoids giving policy advice on handling it myself, and makes clear that a People and Cu...
+
+----------------------------------------------------------------------
+Stopped: Claude replied without a tool request (stop_reason: end_turn).
+Tool calls: 1
+
+Saved to: Week-04\drafts\06-danielle-guest-20261117-131823.txt (not sent)
+To: Danielle Price <danielle.price@ridgelinehotels.example>
+Subject: [NEEDS HR REVIEW] Re: A guest
+
+DRAFT
+Hi Danielle,
+
+Thank you for trusting us with this, and I'm very sorry you're going through this. What you're describing is serious, and you shouldn't have to just "avoid the room" or deal with this kind of treatment at work.
+
+I'm flagging this right away so that someone from our People and Culture team can personally follow up with you as soon as possible to discuss what's happened and the best next steps. You'll hear from a person directly rather than me, given the nature of this situation.
+
+In the meantime, please take care of yourself, and don't hesitate to reach out if anything else happens.
+
+Warm regards,
+HR Assistant (on behalf of the People and Culture team)
+Needs human review: true
+Tokens for this email: 3351 input, 556 output

@@ -1,0 +1,39 @@
+Sender: logan.brooks@ridgelinehotels.example
+Subject: Days off
+Email: Week-04/ridgeline-hotels/sample-emails/07-logan-seasonal.eml
+Organization: ridgeline-hotels
+Model: claude-sonnet-5
+
+Tools offered: search_policy, get_leave_balance, save_reply
+
+Step 1: get_leave_balance
+  inputs: {}
+  result (error): Error executing tool get_leave_balance: No employee record matches logan.brooks@ridgelinehotels.example. Do not state any leave balance, number of days, or estimate for this person. Tell the sender that HR could not find their leave record and that a person from HR will follow up.
+
+Step 2: save_reply
+  inputs: {"reply_text": "Hi Logan,\n\nThanks for reaching out, and welcome to the Durango team!\n\nI tried to look up your PTO balance, but I wasn't able to find a matching leave record for your account in our system. Rather than give you an inaccurate number, I've flagged this for a member of our People and Culture team to look into and follow up with you directly with your accurate PTO balance.\n\nThanks for your patience, and congrats again on starting your new role!\n\nBest,\nHR Assistant\n", "needs_human_review": true}
+  result: Draft saved to Week-04\drafts\07-logan-seasonal-20261117-131836.txt. Nothing was sent.
+
+[Claude] I've prepared the reply. Since the system couldn't locate a leave balance record for Logan's email, I avoided stating any PTO numbers and flagged this for HR review so a team member can follow up with the correct information.
+
+----------------------------------------------------------------------
+Stopped: Claude replied without a tool request (stop_reason: end_turn).
+Tool calls: 2
+
+Saved to: Week-04\drafts\07-logan-seasonal-20261117-131836.txt (not sent)
+To: Logan Brooks <logan.brooks@ridgelinehotels.example>
+Subject: [NEEDS HR REVIEW] Re: Days off
+
+DRAFT
+Hi Logan,
+
+Thanks for reaching out, and welcome to the Durango team!
+
+I tried to look up your PTO balance, but I wasn't able to find a matching leave record for your account in our system. Rather than give you an inaccurate number, I've flagged this for a member of our People and Culture team to look into and follow up with you directly with your accurate PTO balance.
+
+Thanks for your patience, and congrats again on starting your new role!
+
+Best,
+HR Assistant
+Needs human review: true
+Tokens for this email: 4716 input, 328 output

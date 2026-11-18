@@ -1,0 +1,49 @@
+Sender: tyler.reed@ridgelinehotels.example
+Subject: Trip planning
+Email: Week-04/ridgeline-hotels/sample-emails/04-tyler-coworker.eml
+Organization: ridgeline-hotels
+Model: claude-sonnet-5
+
+Tools offered: search_policy, get_leave_balance, save_reply
+
+Step 1: get_leave_balance
+  inputs: {}
+  result: {
+  "email": "tyler.reed@ridgelinehotels.example",
+  "name": "Tyler Reed",
+  "pto_days_remaining": 11,
+  "sick_days_remaining": 6,
+  "source": "employees.csv"
+}
+
+[Claude] I'm sorry, but I can't share another team member's PTO balance, even with their permission — our system only allows me to look up your own leave information. Jenna would need to check her own balance directly (she can reach out to HR or her supervisor for that), and then you two can compare notes to...
+
+Step 2: save_reply
+  inputs: {"reply_text": "Hi Tyler,\n\nI'm sorry, but I can't share another team member's PTO balance, even with their permission — our system only allows me to look up your own leave information. Jenna would need to check her own balance directly (she can reach out to HR or her supervisor for that), and then you two can compare notes to pick dates that work for both of you.\n\nFor reference, your own current balance is:\n- PTO days remaining: 11\n- Sick days remaining: 6\n\nHope the trip planning goes smoothly!\n\nBest,\nHR Assistant", "needs_human_review": false}
+  result: Draft saved to Week-04\drafts\04-tyler-coworker-20261117-131753.txt. Nothing was sent.
+
+[Claude] I've drafted the reply explaining that I can only share Tyler's own PTO/sick balance (11 PTO days, 6 sick days remaining) and that Jenna would need to check her own balance separately. The draft has been saved for review.
+
+----------------------------------------------------------------------
+Stopped: Claude replied without a tool request (stop_reason: end_turn).
+Tool calls: 2
+
+Saved to: Week-04\drafts\04-tyler-coworker-20261117-131753.txt (not sent)
+To: Tyler Reed <tyler.reed@ridgelinehotels.example>
+Subject: Re: Trip planning
+
+DRAFT
+Hi Tyler,
+
+I'm sorry, but I can't share another team member's PTO balance, even with their permission — our system only allows me to look up your own leave information. Jenna would need to check her own balance directly (she can reach out to HR or her supervisor for that), and then you two can compare notes to pick dates that work for both of you.
+
+For reference, your own current balance is:
+- PTO days remaining: 11
+- Sick days remaining: 6
+
+Hope the trip planning goes smoothly!
+
+Best,
+HR Assistant
+Needs human review: false
+Tokens for this email: 5092 input, 575 output
