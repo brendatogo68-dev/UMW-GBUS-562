@@ -1,0 +1,69 @@
+STATUS: DRAFT - NOT SENT
+To: Karen Walsh <k.walsh@northgatedrive.example>
+Subject: Re: PO-7781 - MC-500 controllers - revised shipment schedule
+Reviewer: APPROVE (attempts: 1)
+Source email: 01-northgate-controller-delay.eml
+Coordinator: pipeline
+Saved: 2026-11-21 19:51
+
+Subject: RE: PO-7781 - MC-500 controllers - revised shipment schedule
+
+Hello Karen,
+
+Thank you for letting us know about the change to PO-7781.
+
+Here is the revised schedule as we understand it. Please correct us if anything is wrong:
+
+- Original: all 400 MC-500 motor controllers arriving on the scheduled date.
+- Revised: 120 units ship on the scheduled date, and the remaining 280 units follow three weeks later.
+
+This will delay 3 of our orders, which are short a total of 90 units:
+
+- One order is short 10 units and will be 12 days late.
+- One order is short 30 units and will be 8 days late.
+- One order is short 50 units and will be 5 days late.
+
+We don't share customer details, but the figures above show the full impact on our side.
+
+The main thing that would reduce this impact is getting more units to us sooner. Could you tell us:
+
+1. Whether you can ship more than 120 units on the original date.
+2. Whether you can send any of the remaining 280 units in partial shipments before the three-week date, especially the first 90.
+3. What other options you have in mind, with quantities, dates and any cost implications, sent in writing.
+
+We'd welcome a call this week to go through these. Once we have your options, we will review them and confirm our decision.
+
+Thank you for your help in reducing the delay.
+
+Purchasing, Brookfield Bicycle Company
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "MC-500",
+  "what_changed": "PO-7781 (400 MC-500 motor controllers, originally all arriving on day 5) now delivers 120 units on day 5 and the remaining 280 units on day 26.",
+  "impact": {
+    "orders_delayed": 3,
+    "total_units_short": 90,
+    "most_days_late": 12,
+    "delayed_orders": [
+      {
+        "units_short": 10,
+        "days_late": 12
+      },
+      {
+        "units_short": 30,
+        "days_late": 8
+      },
+      {
+        "units_short": 50,
+        "days_late": 5
+      }
+    ]
+  },
+  "options": [],
+  "brookfield_must_decide": true,
+  "supplier_questions": [
+    "Which of Brookfield's customers are most affected, so Northgate can understand the impact on Brookfield's side?"
+  ]
+}

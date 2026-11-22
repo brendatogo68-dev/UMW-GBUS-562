@@ -1,0 +1,13 @@
+Supplier email: 02-kendall-tire-options.eml (PO-7795 - TR-29 tires - two options, please choose)
+What changed: PO-7795 (400 TR-29 tires) was due on day 8; Kendall Tire now offers either 160 on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, which they will use if we don't reply within two business days).
+Orders at risk:
+  - O-1046 Hilltop Outfitters: 40 TR-29 short, 3 days late
+Option 1: 160 tires on day 8, remaining 240 on day 22: puts at risk no orders
+Option 2: all 400 tires on day 12 (supplier default if no reply): puts at risk no orders
+Customer notices: held until a person chooses an option.
+Supplier reply: drafted
+Drafts saved: 1
+  - week-05/drafts/02-kendall-tire-options/pipeline/supplier-reply.txt [APPROVE]
+Decision needed by a person: YES
+  - Choose Option 1 or Option 2 for PO-7795 and tell Kendall Tire within two business days. If there is no reply, Option 2 applies and O-1046 (Hilltop Outfitters, ship day 9, no late penalty) would be ready on day 12, 3 days late. Option 1 keeps all orders on time.
+  - If Option 1 is chosen, note that O-1050 (Foster Bike & Ski) would be ready on day 22 for its day 24 ship date, so there are only 2 days of slack if Kendall's second shipment slips.

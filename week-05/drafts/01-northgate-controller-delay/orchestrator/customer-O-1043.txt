@@ -1,0 +1,44 @@
+STATUS: DRAFT - NOT SENT
+To: City of Ashford Bike Share <fleet@ashfordbikeshare.example>
+Subject: Update on your order O-1043
+Reviewer: APPROVE (attempts: 1)
+Source email: 01-northgate-controller-delay.eml
+Coordinator: orchestrator
+Saved: 2026-11-21 19:51
+
+Dear City of Ashford Bike Share,
+
+We're writing about your order O-1043 for 100 Commuter E bicycles.
+
+Because of a delay in a part from one of our suppliers, your order is now expected to ship 12 days later than planned. We're sorry for the inconvenience this causes.
+
+If you have questions about your order, please reply to this message and a member of our team will respond.
+
+Thank you for your patience.
+
+Customer Service, Brookfield Bicycle Company
+
+------------------------------------------------------------
+Reviewer notes:
+All six rules pass:
+
+1. **Numbers:** O-1043, 100, Commuter E, and 12 days all appear in the facts.
+2. **Promises:** It makes no promises about dates, quantities, discounts, or credits. The offer of a reply is a general service statement.
+3. **Supplier names:** Not applicable, since this goes to a customer.
+4. **Customer-facing content:** It names no supplier, mentions no other customer, and mentions no cost. "One of our suppliers" is generic.
+5. **Commitments:** It accepts no option, agrees to no cost, and cancels nothing.
+6. **Tone:** It is plain and apologetic, which suits a customer.
+
+The facts don't state why the order is late. The sentence "a delay in a part from one of our suppliers" may be accurate, but the reviewer should confirm the cause before sending.
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "customer": "City of Ashford Bike Share",
+  "order_id": "O-1043",
+  "model": "Commuter E",
+  "quantity": 100,
+  "planned_ship_in_days": 14,
+  "now_expected_ship_in_days": 26,
+  "days_later_than_planned": 12
+}

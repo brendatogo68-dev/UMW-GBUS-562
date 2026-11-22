@@ -1,0 +1,62 @@
+STATUS: DRAFT - NOT SENT
+To: Karen Walsh <k.walsh@northgatedrive.example>
+Subject: Re: PO-7781 - MC-500 controllers - revised shipment schedule
+Reviewer: APPROVE (attempts: 2)
+Source email: 01-northgate-controller-delay.eml
+Coordinator: orchestrator
+Saved: 2026-11-21 19:51
+
+Subject: RE: PO-7781 - MC-500 controllers - revised shipment schedule
+
+Hello Karen,
+
+Thank you for letting us know about the change to PO-7781.
+
+As we understand it, the order for 400 MC-500 motor controllers will now ship in two parts: 120 units on the scheduled date and the remaining 280 units three weeks later. Please let us know right away if any of this is incorrect.
+
+This change delays 3 of our orders, which are short a total of 90 units. The most affected order will be 12 days late.
+
+We don't share customer details, but the figures above show the full impact on our side.
+
+Because our shortfall totals 90 units, any portion of the remaining 280 that you can ship sooner would reduce the impact. Could you tell us:
+
+1. Whether you can ship more than 120 units on the scheduled date.
+2. Whether you can send part of the remaining 280 before the three-week date, and if so, how many and when.
+3. Any other options you can offer and what each would involve.
+
+Please send whatever you can offer in writing. We'll review it and confirm our decision with you.
+
+Thank you for working with us on this.
+
+Purchasing, Brookfield Bicycle Company
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "MC-500",
+  "what_changed": "PO-7781 (400 MC-500 controllers, previously all arriving on day 5) is now split: 120 units arrive on day 5 and the remaining 280 arrive on day 26 (three weeks after the scheduled date).",
+  "impact": {
+    "orders_delayed": 3,
+    "total_units_short": 90,
+    "most_days_late": 12,
+    "delayed_orders": [
+      {
+        "units_short": 10,
+        "days_late": 12
+      },
+      {
+        "units_short": 30,
+        "days_late": 8
+      },
+      {
+        "units_short": 50,
+        "days_late": 5
+      }
+    ]
+  },
+  "options": [],
+  "brookfield_must_decide": true,
+  "supplier_questions": [
+    "Which of Brookfield's customers are most affected by the revised shipment schedule?"
+  ]
+}

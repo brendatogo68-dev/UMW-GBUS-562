@@ -1,0 +1,12 @@
+Supplier email: 02-kendall-tire-options.eml (PO-7795 - TR-29 tires - two options, please choose)
+Specialists used: analyst yes, supplier writer no, customer notices 0
+Orchestrator tool calls: 2
+Drafts saved: 0
+Orchestrator summary: Kendall Tire can't ship PO-7795 (400 TR-29 tires) in one go on day 8 because a machine is down. They're offering two options:
+- Option 1: 160 tires on day 8 and the other 240 on day 22.
+- Option 2: all 400 on day 12. If we don't answer within two business days, they'll go with this one.
+
+The analyst checked both against our orders. Option 1 puts no customer orders at risk. Option 2 would leave Hilltop Outfitters' order O-1046 40 tires short on its ship date (day 9), making it 3 days late (ready day 12). That order has no late penalty.
+
+Because the reply has to pick an option, and the reply writer can't be told which one to pick, I haven't drafted a supplier reply. I also haven't drafted a notice to Hilltop: it would only be needed under Option 2, and sending one now could worry them for nothing. Nothing has been sent.
+Decision needed by a person: YES - Choose Option 1 or Option 2 for PO-7795 and reply to Kendall Tire (Lisa Moreno) within two business days. Otherwise Option 2 happens by default. Based on the analyst's findings, Option 1 looks better because it puts no orders at risk. Before choosing it, check that 160 tires on day 8 and the other 240 on day 22 works for production. If you choose Option 2, or no reply goes out in time, let Hilltop Outfitters know that order O-1046 will be 3 days late (ready day 12 instead of day 9). That notice can be drafted on request.

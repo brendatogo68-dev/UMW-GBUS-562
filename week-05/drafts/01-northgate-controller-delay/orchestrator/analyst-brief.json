@@ -1,0 +1,309 @@
+{
+  "brief": {
+    "part_id": "MC-500",
+    "what_changed": "PO-7781 (400 MC-500 controllers, previously all arriving on day 5) is now split: 120 units arrive on day 5 and the remaining 280 arrive on day 26 (three weeks after the scheduled date).",
+    "orders_at_risk": [
+      {
+        "order_id": "O-1043",
+        "customer": "City of Ashford Bike Share",
+        "units_short": 10,
+        "ship_day": 14,
+        "ready_day": 26,
+        "late_penalty": true
+      },
+      {
+        "order_id": "O-1044",
+        "customer": "Main Street Bikes",
+        "units_short": 30,
+        "ship_day": 18,
+        "ready_day": 26,
+        "late_penalty": false
+      },
+      {
+        "order_id": "O-1045",
+        "customer": "Lakeview Rentals",
+        "units_short": 50,
+        "ship_day": 21,
+        "ready_day": 26,
+        "late_penalty": false
+      }
+    ],
+    "options": [],
+    "decisions_for_a_person": [
+      "Whether to take up Karen Walsh's offer to discuss other options this week (for example, sending more units sooner), given that the split delays three orders and the current full shipment on day 5 delays none.",
+      "How to handle O-1043 (City of Ashford Bike Share), which has a late penalty, is 10 units short and would be 12 days late (ready day 26 against ship day 14).",
+      "Whether and how to tell Main Street Bikes (O-1044, 8 days late) and Lakeview Rentals (O-1045, 5 days late) about the delays.",
+      "How much customer information to share with Northgate in answer to their question about which customers are most affected."
+    ],
+    "supplier_questions": [
+      "Which of Brookfield's customers are most affected by the revised shipment schedule?"
+    ]
+  },
+  "check_issues": [],
+  "coverage_runs": [
+    {
+      "input": {
+        "part_id": "MC-500",
+        "po_number": "PO-7781",
+        "new_schedule": [
+          {
+            "qty": 120,
+            "arrives_in_days": 5
+          },
+          {
+            "qty": 280,
+            "arrives_in_days": 26
+          }
+        ]
+      },
+      "result": {
+        "part_id": "MC-500",
+        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
+        "schedule_used": [
+          {
+            "qty": 40,
+            "arrives_in_days": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 120,
+            "arrives_in_days": 5,
+            "source": "PO-7781"
+          },
+          {
+            "qty": 280,
+            "arrives_in_days": 26,
+            "source": "PO-7781"
+          }
+        ],
+        "orders": [
+          {
+            "order_id": "O-1041",
+            "customer": "Riverside Cycles",
+            "model": "Commuter E",
+            "bikes": 40,
+            "parts_needed": 40,
+            "ship_day": 7,
+            "ready_day": 0,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1042",
+            "customer": "Blue Ridge Bike Shop",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 10,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": true
+          },
+          {
+            "order_id": "O-1043",
+            "customer": "City of Ashford Bike Share",
+            "model": "Commuter E",
+            "bikes": 100,
+            "parts_needed": 100,
+            "ship_day": 14,
+            "ready_day": 26,
+            "on_time": false,
+            "late_penalty": true,
+            "units_short": 10,
+            "days_late": 12
+          },
+          {
+            "order_id": "O-1044",
+            "customer": "Main Street Bikes",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 18,
+            "ready_day": 26,
+            "on_time": false,
+            "late_penalty": false,
+            "units_short": 30,
+            "days_late": 8
+          },
+          {
+            "order_id": "O-1045",
+            "customer": "Lakeview Rentals",
+            "model": "Commuter E",
+            "bikes": 50,
+            "parts_needed": 50,
+            "ship_day": 21,
+            "ready_day": 26,
+            "on_time": false,
+            "late_penalty": false,
+            "units_short": 50,
+            "days_late": 5
+          },
+          {
+            "order_id": "O-1048",
+            "customer": "Bayside Cycle Co.",
+            "model": "Cargo E",
+            "bikes": 20,
+            "parts_needed": 20,
+            "ship_day": 28,
+            "ready_day": 26,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1047",
+            "customer": "Greenway Cycles",
+            "model": "Commuter E",
+            "bikes": 70,
+            "parts_needed": 70,
+            "ship_day": 35,
+            "ready_day": 26,
+            "on_time": true,
+            "late_penalty": false
+          }
+        ],
+        "orders_at_risk": [
+          {
+            "order_id": "O-1043",
+            "customer": "City of Ashford Bike Share",
+            "model": "Commuter E",
+            "bikes": 100,
+            "parts_needed": 100,
+            "ship_day": 14,
+            "ready_day": 26,
+            "on_time": false,
+            "late_penalty": true,
+            "units_short": 10,
+            "days_late": 12
+          },
+          {
+            "order_id": "O-1044",
+            "customer": "Main Street Bikes",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 18,
+            "ready_day": 26,
+            "on_time": false,
+            "late_penalty": false,
+            "units_short": 30,
+            "days_late": 8
+          },
+          {
+            "order_id": "O-1045",
+            "customer": "Lakeview Rentals",
+            "model": "Commuter E",
+            "bikes": 50,
+            "parts_needed": 50,
+            "ship_day": 21,
+            "ready_day": 26,
+            "on_time": false,
+            "late_penalty": false,
+            "units_short": 50,
+            "days_late": 5
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "part_id": "MC-500"
+      },
+      "result": {
+        "part_id": "MC-500",
+        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
+        "schedule_used": [
+          {
+            "qty": 40,
+            "arrives_in_days": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 400,
+            "arrives_in_days": 5,
+            "source": "PO-7781"
+          }
+        ],
+        "orders": [
+          {
+            "order_id": "O-1041",
+            "customer": "Riverside Cycles",
+            "model": "Commuter E",
+            "bikes": 40,
+            "parts_needed": 40,
+            "ship_day": 7,
+            "ready_day": 0,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1042",
+            "customer": "Blue Ridge Bike Shop",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 10,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": true
+          },
+          {
+            "order_id": "O-1043",
+            "customer": "City of Ashford Bike Share",
+            "model": "Commuter E",
+            "bikes": 100,
+            "parts_needed": 100,
+            "ship_day": 14,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": true
+          },
+          {
+            "order_id": "O-1044",
+            "customer": "Main Street Bikes",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 18,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1045",
+            "customer": "Lakeview Rentals",
+            "model": "Commuter E",
+            "bikes": 50,
+            "parts_needed": 50,
+            "ship_day": 21,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1048",
+            "customer": "Bayside Cycle Co.",
+            "model": "Cargo E",
+            "bikes": 20,
+            "parts_needed": 20,
+            "ship_day": 28,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1047",
+            "customer": "Greenway Cycles",
+            "model": "Commuter E",
+            "bikes": 70,
+            "parts_needed": 70,
+            "ship_day": 35,
+            "ready_day": 5,
+            "on_time": true,
+            "late_penalty": false
+          }
+        ],
+        "orders_at_risk": []
+      }
+    }
+  ]
+}

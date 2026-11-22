@@ -1,0 +1,190 @@
+{
+  "brief": {
+    "part_id": "TR-29",
+    "what_changed": "PO-7795 (400 TR-29 tires, scheduled for day 8) can't arrive in one shipment on day 8; Kendall offers either 160 tires on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, the default if Brookfield doesn't answer within two business days).",
+    "orders_at_risk": [
+      {
+        "order_id": "O-1046",
+        "customer": "Hilltop Outfitters",
+        "units_short": 40,
+        "ship_day": 9,
+        "ready_day": 12,
+        "late_penalty": false
+      }
+    ],
+    "options": [
+      {
+        "name": "Option 1: 160 tires on scheduled date (day 8), remaining 240 two weeks later (day 22)",
+        "orders_at_risk": []
+      },
+      {
+        "name": "Option 2: all 400 tires four days after scheduled date (day 12)",
+        "orders_at_risk": [
+          "O-1046"
+        ]
+      }
+    ],
+    "decisions_for_a_person": [
+      "Choose Option 1 or Option 2 for PO-7795 and reply to Kendall Tire Supply within two business days; with no reply, Kendall will go with Option 2, which makes O-1046 (Hilltop Outfitters) 3 days late. Option 1 puts no orders at risk."
+    ],
+    "supplier_questions": [
+      "Which option does Brookfield prefer for PO-7795 (Option 1: split shipment, or Option 2: full shipment four days late)? Reply requested within two business days."
+    ]
+  },
+  "check_issues": [],
+  "coverage_runs": [
+    {
+      "input": {
+        "part_id": "TR-29",
+        "po_number": "PO-7795",
+        "new_schedule": [
+          {
+            "qty": 160,
+            "arrives_in_days": 8
+          },
+          {
+            "qty": 240,
+            "arrives_in_days": 22
+          }
+        ]
+      },
+      "result": {
+        "part_id": "TR-29",
+        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
+        "schedule_used": [
+          {
+            "qty": 120,
+            "arrives_in_days": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 160,
+            "arrives_in_days": 8,
+            "source": "PO-7795"
+          },
+          {
+            "qty": 240,
+            "arrives_in_days": 22,
+            "source": "PO-7795"
+          }
+        ],
+        "orders": [
+          {
+            "order_id": "O-1046",
+            "customer": "Hilltop Outfitters",
+            "model": "Trail 29",
+            "bikes": 80,
+            "parts_needed": 160,
+            "ship_day": 9,
+            "ready_day": 8,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1049",
+            "customer": "Pine Valley Outdoors",
+            "model": "Trail 29",
+            "bikes": 40,
+            "parts_needed": 80,
+            "ship_day": 16,
+            "ready_day": 8,
+            "on_time": true,
+            "late_penalty": true
+          },
+          {
+            "order_id": "O-1050",
+            "customer": "Foster Bike & Ski",
+            "model": "Trail 29",
+            "bikes": 30,
+            "parts_needed": 60,
+            "ship_day": 24,
+            "ready_day": 22,
+            "on_time": true,
+            "late_penalty": false
+          }
+        ],
+        "orders_at_risk": []
+      }
+    },
+    {
+      "input": {
+        "part_id": "TR-29",
+        "po_number": "PO-7795",
+        "new_schedule": [
+          {
+            "qty": 400,
+            "arrives_in_days": 12
+          }
+        ]
+      },
+      "result": {
+        "part_id": "TR-29",
+        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
+        "schedule_used": [
+          {
+            "qty": 120,
+            "arrives_in_days": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 400,
+            "arrives_in_days": 12,
+            "source": "PO-7795"
+          }
+        ],
+        "orders": [
+          {
+            "order_id": "O-1046",
+            "customer": "Hilltop Outfitters",
+            "model": "Trail 29",
+            "bikes": 80,
+            "parts_needed": 160,
+            "ship_day": 9,
+            "ready_day": 12,
+            "on_time": false,
+            "late_penalty": false,
+            "units_short": 40,
+            "days_late": 3
+          },
+          {
+            "order_id": "O-1049",
+            "customer": "Pine Valley Outdoors",
+            "model": "Trail 29",
+            "bikes": 40,
+            "parts_needed": 80,
+            "ship_day": 16,
+            "ready_day": 12,
+            "on_time": true,
+            "late_penalty": true
+          },
+          {
+            "order_id": "O-1050",
+            "customer": "Foster Bike & Ski",
+            "model": "Trail 29",
+            "bikes": 30,
+            "parts_needed": 60,
+            "ship_day": 24,
+            "ready_day": 12,
+            "on_time": true,
+            "late_penalty": false
+          }
+        ],
+        "orders_at_risk": [
+          {
+            "order_id": "O-1046",
+            "customer": "Hilltop Outfitters",
+            "model": "Trail 29",
+            "bikes": 80,
+            "parts_needed": 160,
+            "ship_day": 9,
+            "ready_day": 12,
+            "on_time": false,
+            "late_penalty": false,
+            "units_short": 40,
+            "days_late": 3
+          }
+        ]
+      }
+    }
+  ]
+}

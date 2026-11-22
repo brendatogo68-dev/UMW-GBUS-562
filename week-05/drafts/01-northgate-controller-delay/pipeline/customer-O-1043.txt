@@ -1,0 +1,41 @@
+STATUS: DRAFT - NOT SENT
+To: City of Ashford Bike Share <fleet@ashfordbikeshare.example>
+Subject: Update on your order O-1043
+Reviewer: APPROVE (attempts: 1)
+Source email: 01-northgate-controller-delay.eml
+Coordinator: pipeline
+Saved: 2026-11-21 19:51
+
+Subject: Update on Your Order O-1043
+
+Dear City of Ashford Bike Share,
+
+We're writing about your order O-1043 for 100 Commuter E bicycles.
+
+Because of a delay in a part from one of our suppliers, your order is now expected to ship 12 days later than planned. We're sorry for the inconvenience this may cause.
+
+If you have any questions about your order, please reply to this message and a member of our team will respond.
+
+Thank you for your patience.
+
+Customer Service, Brookfield Bicycle Company
+
+------------------------------------------------------------
+Reviewer notes:
+- **Rule 1:** O-1043, 100, and 12 all appear in the facts.
+- **Rule 2:** The draft gives no ship date, discount, or credit. "A member of our team will respond" includes no timeframe.
+- **Rule 4:** "one of our suppliers" names no supplier. The draft mentions no other customer and no cost.
+- **Rule 5:** The draft accepts nothing and cancels nothing.
+- **Rule 6:** The tone is plain and apologetic.
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "customer": "City of Ashford Bike Share",
+  "order_id": "O-1043",
+  "model": "Commuter E",
+  "quantity": 100,
+  "planned_ship_in_days": 14,
+  "now_expected_ship_in_days": 26,
+  "days_later_than_planned": 12
+}

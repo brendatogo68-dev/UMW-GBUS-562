@@ -1,0 +1,44 @@
+STATUS: DRAFT - NOT SENT
+To: Lakeview Rentals <info@lakeviewrentals.example>
+Subject: Update on your order O-1045
+Reviewer: APPROVE (attempts: 1)
+Source email: 01-northgate-controller-delay.eml
+Coordinator: orchestrator
+Saved: 2026-11-21 19:52
+
+Subject: Update on Your Order O-1045
+
+Dear Lakeview Rentals,
+
+We're writing about your order O-1045 for 50 Commuter E bicycles. A part from one of our suppliers has been delayed, and as a result your order is now expected to ship 5 days later than planned.
+
+We're sorry for this delay and the inconvenience it may cause.
+
+We will let you know if anything changes. If you have questions in the meantime, please reply to this message and a member of our team will be glad to help.
+
+Thank you for your patience.
+
+Customer Service, Brookfield Bicycle Company
+
+------------------------------------------------------------
+Reviewer notes:
+1. **Numbers:** Every number and order number appears in the facts: O-1045, 50, and 5 days later than planned.
+2. **Promises:** The draft gives no new ship date, quantity, discount or credit. "We will let you know if anything changes" is a commitment to communicate, not a delivery promise.
+3. **Supplier rule:** This rule doesn't apply because the draft goes to a customer.
+4. **Customer rule:** The draft names no supplier and no other customer, and it mentions no cost. "One of our suppliers" is generic.
+5. **Accepting, agreeing or cancelling:** The draft accepts no option, agrees to no cost and cancels nothing.
+6. **Tone:** The tone is plain and apologetic, which fits a customer.
+
+Note for the sender: the facts don't give a cause for the delay. No rule covers this, but the reviewer should confirm that a delayed supplier part is the actual cause before sending. If it isn't, change that sentence to "your order is now expected to ship 5 days later than planned."
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "customer": "Lakeview Rentals",
+  "order_id": "O-1045",
+  "model": "Commuter E",
+  "quantity": 50,
+  "planned_ship_in_days": 21,
+  "now_expected_ship_in_days": 26,
+  "days_later_than_planned": 5
+}

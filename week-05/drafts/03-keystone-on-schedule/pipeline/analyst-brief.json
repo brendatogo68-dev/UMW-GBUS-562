@@ -1,0 +1,70 @@
+{
+  "brief": {
+    "part_id": "BP-48",
+    "what_changed": "Nothing changed: PO-7790 for 150 BP-48 battery packs shipped today and is still due to arrive on day 6 as scheduled.",
+    "orders_at_risk": [],
+    "options": [],
+    "decisions_for_a_person": [],
+    "supplier_questions": []
+  },
+  "check_issues": [],
+  "coverage_runs": [
+    {
+      "input": {
+        "part_id": "BP-48"
+      },
+      "result": {
+        "part_id": "BP-48",
+        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
+        "schedule_used": [
+          {
+            "qty": 35,
+            "arrives_in_days": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 150,
+            "arrives_in_days": 6,
+            "source": "PO-7790"
+          }
+        ],
+        "orders": [
+          {
+            "order_id": "O-1042",
+            "customer": "Blue Ridge Bike Shop",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 10,
+            "ready_day": 0,
+            "on_time": true,
+            "late_penalty": true
+          },
+          {
+            "order_id": "O-1044",
+            "customer": "Main Street Bikes",
+            "model": "Cargo E",
+            "bikes": 30,
+            "parts_needed": 30,
+            "ship_day": 18,
+            "ready_day": 6,
+            "on_time": true,
+            "late_penalty": false
+          },
+          {
+            "order_id": "O-1048",
+            "customer": "Bayside Cycle Co.",
+            "model": "Cargo E",
+            "bikes": 20,
+            "parts_needed": 20,
+            "ship_day": 28,
+            "ready_day": 6,
+            "on_time": true,
+            "late_penalty": false
+          }
+        ],
+        "orders_at_risk": []
+      }
+    }
+  ]
+}

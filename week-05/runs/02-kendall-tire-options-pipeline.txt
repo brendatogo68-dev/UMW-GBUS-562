@@ -1,0 +1,52 @@
+Email: 02-kendall-tire-options.eml
+From: Lisa Moreno <l.moreno@kendalltire.example>
+Subject: PO-7795 - TR-29 tires - two options, please choose
+Coordinator: fixed pipeline   Model: claude-opus-5-5
+
+== Supply analyst
+  Tools offered: check_coverage, get_orders_for_part, get_part
+  analyst step 1: get_part {"part_id": "TR-29"}
+    -> { "part_id": "TR-29", "description": "29-inch trail tire", "on_hand": 120, "supplier": "Kendall Tire Supply", "scheduled_shipments": [ { "po_number": "PO-7795", "qty": 400, "arrives_in_days": 8, "supplier": "Kendall Tire Supply" } ], "used_in_models": [ "Trail 29" ] }
+  analyst step 2: get_orders_for_part {"part_id": "TR-29"}
+    -> { "part_id": "TR-29", "orders": [ { "order_id": "O-1046", "customer": "Hilltop Outfitters", "model": "Trail 29", "bikes": 80, "parts_needed": 160, "ship_day": 9, "late_penalty": false }, { "order_id": "O-1049", "customer": "Pine Valley Outdoors", "model": "Trail 29", "bikes": 40, "parts_needed": 80,...
+  [analyst] Scheduled day 8. Option 1: 160 on day 8, 240 on day 22. Option 2: 400 on day 12.
+  analyst step 3: check_coverage {"part_id": "TR-29", "po_number": "PO-7795", "new_schedule": [{"qty": 160, "arrives_in_days": 8}, {"qty": 240, "arrives_in_days": 22}]}
+    -> { "part_id": "TR-29", "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.", "schedule_used": [ { "qty": 120, "arrives_in_days": 0, "source": "on hand" }, { "qty": 160, "arrives_in_days": 8, "source": "PO-7795" }, { "qty": 240, "arrives_in_days":...
+  analyst step 4: check_coverage {"part_id": "TR-29", "po_number": "PO-7795", "new_schedule": [{"qty": 400, "arrives_in_days": 12}]}
+    -> { "part_id": "TR-29", "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.", "schedule_used": [ { "qty": 120, "arrives_in_days": 0, "source": "on hand" }, { "qty": 400, "arrives_in_days": 12, "source": "PO-7795" } ], "orders": [ { "order_id": "O-...
+  analyst step 5: check_coverage {"part_id": "TR-29"}
+    -> { "part_id": "TR-29", "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.", "schedule_used": [ { "qty": 120, "arrives_in_days": 0, "source": "on hand" }, { "qty": 400, "arrives_in_days": 8, "source": "PO-7795" } ], "orders": [ { "order_id": "O-1...
+  [analyst] The email delays PO-7795 under either option. It arrives today on day 8: 400 tires, plus 120 already on hand. Kendall asks us to choose an option within two business days. **If we don't answer, they will go with Option 2, and Option 2 makes one order late.** - **Option 1 (160 tires on day 8, the oth...
+  analyst finished (stop_reason: end_turn).
+
+  Brief: PO-7795 (400 TR-29 tires) was due on day 8; Kendall Tire now offers either 160 on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, which they will use if we don't reply within two business days).
+
+== Supplier writer
+  [supplier-writer] draft 1: 181 words
+  [reviewer] REVISE: **Rule 3 (describes a customer's order):** Delete the sentence "As things stand, this change leaves one of our orders 40 units short and up to 3 days late." It 
+  [supplier-writer] draft 2: 162 words
+  [reviewer] APPROVE: No rule is broken:
+
+== Customer notices held: the supplier offers options, so a person must choose first.
+
+----------------------------------------------------------------------
+Supplier email: 02-kendall-tire-options.eml (PO-7795 - TR-29 tires - two options, please choose)
+What changed: PO-7795 (400 TR-29 tires) was due on day 8; Kendall Tire now offers either 160 on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, which they will use if we don't reply within two business days).
+Orders at risk:
+  - O-1046 Hilltop Outfitters: 40 TR-29 short, 3 days late
+Option 1: 160 tires on day 8, remaining 240 on day 22: puts at risk no orders
+Option 2: all 400 tires on day 12 (supplier default if no reply): puts at risk no orders
+Customer notices: held until a person chooses an option.
+Supplier reply: drafted
+Drafts saved: 1
+  - week-05/drafts/02-kendall-tire-options/pipeline/supplier-reply.txt [APPROVE]
+Decision needed by a person: YES
+  - Choose Option 1 or Option 2 for PO-7795 and tell Kendall Tire within two business days. If there is no reply, Option 2 applies and O-1046 (Hilltop Outfitters, ship day 9, no late penalty) would be ready on day 12, 3 days late. Option 1 keeps all orders on time.
+  - If Option 1 is chosen, note that O-1050 (Foster Bike & Ski) would be ready on day 22 for its day 24 ship date, so there are only 2 days of slack if Kendall's second shipment slips.
+
+Nothing was sent.
+Tokens:
+  analyst             9374 input,   1711 output
+  supplier-writer     3736 input,   1856 output
+  reviewer            2906 input,   2151 output
+  total              16016 input,   5718 output

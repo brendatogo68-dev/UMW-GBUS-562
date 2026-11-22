@@ -23,3 +23,8 @@ Materials are organized into weekly folders (for example, `Week-01`, `Week-02`, 
    - **Write-up** (`writeup.md`): what was built, the structure-based chunking approach, an example run, and a reflection on the outdated-document problem and an out-of-scope question.
 4. [Week-04](Week-04/): an AI agent that prepares replies to HR emails using tools from an MCP server, built with Claude Code.
    - **Write-up** (`writeup.md`): what was built and the changes for Ridgeline Hotels, the script/model-call/agent choices for Tasks A–C, an example run (Email 6) and a reflection on Emails 3, 6 and 7.
+5. [Week 5](week-05/): a team of AI agents that prepares a bicycle maker's response to supplier emails, built with Claude Code.
+   - **Specialists** (`specialists.py`): a supply analyst that uses data tools from an MCP server (`supply_mcp_server.py`), a writer for supplier replies, a writer for customer notices, and a reviewer that checks every draft (one revision allowed). Code checks the analyst's brief against the tool results and gives each writer only the facts it should see.
+   - **Coordinators**: a fixed pipeline (`pipeline.py`) that always runs the same steps, and an orchestrator agent (`orchestrator.py`) that chooses which specialists each email needs. Both use `--email FILE` or `--all`.
+   - **Supply data** (`supply_data.py`, `brookfield-bikes/`): parts, inbound shipments, orders, bill of materials and suppliers for Brookfield Bicycle Company. Coverage is plain Python: parts go to orders by earliest ship date, and an order ships only when complete.
+   - **Outputs** (`drafts/`, `runs/`): the drafts, analyst briefs, summaries and run logs for the three supplier emails, from both coordinators. Nothing is sent.

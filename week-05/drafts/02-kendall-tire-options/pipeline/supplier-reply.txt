@@ -1,0 +1,72 @@
+STATUS: DRAFT - NOT SENT
+To: Lisa Moreno <l.moreno@kendalltire.example>
+Subject: Re: PO-7795 - TR-29 tires - two options, please choose
+Reviewer: APPROVE (attempts: 2)
+Source email: 02-kendall-tire-options.eml
+Coordinator: pipeline
+Saved: 2026-11-21 19:52
+
+Subject: RE: PO-7795 - TR-29 tires - two options, please choose
+
+Hi Lisa,
+
+Thank you for letting us know about the mixing machine. To confirm our understanding, PO-7795 for 400 TR-29 trail tires will not ship in full on the scheduled date. Kendall Tire is offering two options:
+
+- **Option 1:** 160 tires on the scheduled date and the remaining 240 two weeks later.
+- **Option 2:** all 400 tires together, four days after the scheduled date.
+
+If possible, any of the following would help us:
+
+- Shipping more than 160 tires on the scheduled date.
+- Shipping the remaining 240 sooner than two weeks after the scheduled date.
+- Shipping all 400 sooner than four days after the scheduled date.
+- Letting us know right away if the repair finishes early and timing can improve.
+
+We are reviewing both options and will confirm our choice within the two business days you requested.
+
+Thank you for your help,
+
+Purchasing, Brookfield Bicycle Company
+
+------------------------------------------------------------
+Reviewer notes:
+No rule is broken:
+
+- **Rule 1:** Every number and the order number come from the supplier's email: PO-7795, 400 TR-29 tires, 160 and 240, two weeks, four days, and two business days.
+- **Rule 2:** The requests for more tires or earlier shipments are asked "if possible," so they promise nothing. The line about confirming within two business days only commits to answering by the supplier's own deadline, which the facts call for since Brookfield must decide.
+- **Rule 3:** The draft names no customer and describes no customer order or impact.
+- **Rule 4:** Not applicable, since this goes to a supplier.
+- **Rule 5:** The draft accepts neither option and agrees to no cost or cancellation. It says Brookfield is reviewing both.
+- **Rule 6:** The tone is firm and cooperative. The draft thanks Lisa, restates the situation, asks for improvements, and commits to a timely reply.
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "TR-29",
+  "what_changed": "PO-7795 (400 TR-29 tires) was due on day 8; Kendall Tire now offers either 160 on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, which they will use if we don't reply within two business days).",
+  "impact": {
+    "orders_delayed": 1,
+    "total_units_short": 40,
+    "most_days_late": 3,
+    "delayed_orders": [
+      {
+        "units_short": 40,
+        "days_late": 3
+      }
+    ]
+  },
+  "options": [
+    {
+      "name": "Option 1: 160 tires on day 8, remaining 240 on day 22",
+      "orders_delayed": 0
+    },
+    {
+      "name": "Option 2: all 400 tires on day 12 (supplier default if no reply)",
+      "orders_delayed": 0
+    }
+  ],
+  "brookfield_must_decide": true,
+  "supplier_questions": [
+    "Which option do you prefer (Option 1: 160 on the scheduled date and 240 two weeks later; Option 2: all 400 four days after the scheduled date)? Please reply within two business days; Option 2 will be used if we don't hear from you."
+  ]
+}
