@@ -1,32 +1,26 @@
 STATUS: DRAFT - NOT SENT
+Check: NEEDS A PERSON: this order has a late penalty
 To: City of Ashford Bike Share <fleet@ashfordbikeshare.example>
 Subject: Update on your order O-1043
-Reviewer: APPROVE (attempts: 1)
+Reviewer: APPROVE (drafts: 1, revisions allowed: 2)
+Name check: pass
 Source email: 01-northgate-controller-delay.eml
-Coordinator: pipeline
-Saved: 2026-11-21 19:51
+Coordinator: pipeline   Specialist model: claude-sonnet-5
+Saved: 2026-11-23 21:40
 
 Subject: Update on Your Order O-1043
 
 Dear City of Ashford Bike Share,
 
-We're writing about your order O-1043 for 100 Commuter E bicycles.
+We're writing to update you on order O-1043 for 100 Commuter E bicycles. This order is now expected to ship in 26 days, which is 12 days later than originally planned.
 
-Because of a delay in a part from one of our suppliers, your order is now expected to ship 12 days later than planned. We're sorry for the inconvenience this may cause.
+We apologize for this delay. It is due to a delay in a part from one of our suppliers.
 
-If you have any questions about your order, please reply to this message and a member of our team will respond.
+We understand the importance of this order and will keep you informed of any further updates as we work to get your bicycles to you as soon as possible.
 
-Thank you for your patience.
+Thank you for your patience and understanding.
 
 Customer Service, Brookfield Bicycle Company
-
-------------------------------------------------------------
-Reviewer notes:
-- **Rule 1:** O-1043, 100, and 12 all appear in the facts.
-- **Rule 2:** The draft gives no ship date, discount, or credit. "A member of our team will respond" includes no timeframe.
-- **Rule 4:** "one of our suppliers" names no supplier. The draft mentions no other customer and no cost.
-- **Rule 5:** The draft accepts nothing and cancels nothing.
-- **Rule 6:** The tone is plain and apologetic.
 
 ------------------------------------------------------------
 Facts the writer was given:

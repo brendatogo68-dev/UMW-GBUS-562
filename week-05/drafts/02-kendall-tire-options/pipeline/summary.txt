@@ -1,13 +1,13 @@
 Supplier email: 02-kendall-tire-options.eml (PO-7795 - TR-29 tires - two options, please choose)
-What changed: PO-7795 (400 TR-29 tires) was due on day 8; Kendall Tire now offers either 160 on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, which they will use if we don't reply within two business days).
-Orders at risk:
-  - O-1046 Hilltop Outfitters: 40 TR-29 short, 3 days late
-Option 1: 160 tires on day 8, remaining 240 on day 22: puts at risk no orders
-Option 2: all 400 tires on day 12 (supplier default if no reply): puts at risk no orders
-Customer notices: held until a person chooses an option.
+What changed: Instead of the full 400 tires arriving on day 8 as scheduled, Kendall Tire is offering either (Option 1) 160 tires on day 8 and the remaining 240 on day 22, or (Option 2, the default) all 400 tires together on day 12.
+Orders at risk: O-1046
 Supplier reply: drafted
-Drafts saved: 1
-  - week-05/drafts/02-kendall-tire-options/pipeline/supplier-reply.txt [APPROVE]
-Decision needed by a person: YES
-  - Choose Option 1 or Option 2 for PO-7795 and tell Kendall Tire within two business days. If there is no reply, Option 2 applies and O-1046 (Hilltop Outfitters, ship day 9, no late penalty) would be ready on day 12, 3 days late. Option 1 keeps all orders on time.
-  - If Option 1 is chosen, note that O-1050 (Foster Bike & Ski) would be ready on day 22 for its day 24 ship date, so there are only 2 days of slack if Kendall's second shipment slips.
+Drafts saved: 2
+  - week-05/drafts/02-kendall-tire-options/pipeline/customer-O-1046.txt [reviewer: APPROVE]
+  - week-05/drafts/02-kendall-tire-options/pipeline/supplier-reply.txt [reviewer: APPROVE]
+Drafts marked for a person: 1
+  - week-05/drafts/02-kendall-tire-options/pipeline/customer-O-1046.txt: the supplier offers options; send only if the chosen option delays this order
+Decisions for a person: 2
+  - Choose between Option 1 (split shipment, no orders at risk) and Option 2 (single shipment on day 12, which leaves order O-1046 40 units short and 3 days late) and reply to Kendall Tire within two business days.
+  - If no option is chosen, the supplier will default to Option 2, putting O-1046 at risk — confirm whether this is acceptable.
+Total tokens: 14492 (12300 input, 2192 output)

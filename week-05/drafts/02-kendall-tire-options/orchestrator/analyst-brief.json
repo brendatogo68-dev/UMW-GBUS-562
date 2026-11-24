@@ -1,7 +1,7 @@
 {
   "brief": {
     "part_id": "TR-29",
-    "what_changed": "PO-7795 (400 TR-29 tires, scheduled for day 8) can't arrive in one shipment on day 8; Kendall offers either 160 tires on day 8 and 240 on day 22 (Option 1), or all 400 on day 12 (Option 2, the default if Brookfield doesn't answer within two business days).",
+    "what_changed": "Instead of the full 400-tire PO-7795 arriving on day 8, Kendall Tire is offering either (Option 1) 160 tires on day 8 and the remaining 240 on day 22, or (Option 2) all 400 tires together on day 12.",
     "orders_at_risk": [
       {
         "order_id": "O-1046",
@@ -14,21 +14,22 @@
     ],
     "options": [
       {
-        "name": "Option 1: 160 tires on scheduled date (day 8), remaining 240 two weeks later (day 22)",
-        "orders_at_risk": []
+        "name": "Option 1: 160 on day 8, 240 on day 22",
+        "order_ids_at_risk": []
       },
       {
-        "name": "Option 2: all 400 tires four days after scheduled date (day 12)",
-        "orders_at_risk": [
+        "name": "Option 2: all 400 on day 12",
+        "order_ids_at_risk": [
           "O-1046"
         ]
       }
     ],
     "decisions_for_a_person": [
-      "Choose Option 1 or Option 2 for PO-7795 and reply to Kendall Tire Supply within two business days; with no reply, Kendall will go with Option 2, which makes O-1046 (Hilltop Outfitters) 3 days late. Option 1 puts no orders at risk."
+      "Choose between Option 1 (split shipment, keeps all current orders on time) and Option 2 (single shipment on day 12, but leaves order O-1046 for Hilltop Outfitters 40 units short and about 3 days late). Note: if no choice is communicated within two business days, the supplier will default to Option 2, which puts O-1046 at risk.",
+      "If Option 2 is chosen or defaulted to, decide how to handle the 3-day delay/shortfall for O-1046 (e.g., notify customer, expedite partial shipment, or accept the delay since no late penalty applies)."
     ],
     "supplier_questions": [
-      "Which option does Brookfield prefer for PO-7795 (Option 1: split shipment, or Option 2: full shipment four days late)? Reply requested within two business days."
+      "Which option do you prefer, Option 1 (split shipment) or Option 2 (single delayed shipment)? Please respond within two business days."
     ]
   },
   "check_issues": [],
@@ -36,114 +37,114 @@
     {
       "input": {
         "part_id": "TR-29",
-        "po_number": "PO-7795",
-        "new_schedule": [
+        "arrivals": [
           {
-            "qty": 160,
-            "arrives_in_days": 8
+            "day": 8,
+            "qty": 160
           },
           {
-            "qty": 240,
-            "arrives_in_days": 22
+            "day": 22,
+            "qty": 240
           }
         ]
       },
       "result": {
         "part_id": "TR-29",
-        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
-        "schedule_used": [
+        "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.",
+        "supply_used": [
           {
             "qty": 120,
-            "arrives_in_days": 0,
+            "day": 0,
             "source": "on hand"
           },
           {
             "qty": 160,
-            "arrives_in_days": 8,
-            "source": "PO-7795"
+            "day": 8,
+            "source": "arrival"
           },
           {
             "qty": 240,
-            "arrives_in_days": 22,
-            "source": "PO-7795"
+            "day": 22,
+            "source": "arrival"
           }
         ],
+        "total_supply": 520,
+        "total_needed": 300,
         "orders": [
           {
             "order_id": "O-1046",
             "customer": "Hilltop Outfitters",
             "model": "Trail 29",
             "bikes": 80,
-            "parts_needed": 160,
+            "units_needed": 160,
             "ship_day": 9,
-            "ready_day": 8,
-            "on_time": true,
-            "late_penalty": false
+            "late_penalty": false,
+            "covered": true
           },
           {
             "order_id": "O-1049",
             "customer": "Pine Valley Outdoors",
             "model": "Trail 29",
             "bikes": 40,
-            "parts_needed": 80,
+            "units_needed": 80,
             "ship_day": 16,
-            "ready_day": 8,
-            "on_time": true,
-            "late_penalty": true
+            "late_penalty": true,
+            "covered": true
           },
           {
             "order_id": "O-1050",
             "customer": "Foster Bike & Ski",
             "model": "Trail 29",
             "bikes": 30,
-            "parts_needed": 60,
+            "units_needed": 60,
             "ship_day": 24,
-            "ready_day": 22,
-            "on_time": true,
-            "late_penalty": false
+            "late_penalty": false,
+            "covered": true
           }
         ],
-        "orders_at_risk": []
+        "orders_short": [],
+        "all_covered": true
       }
     },
     {
       "input": {
         "part_id": "TR-29",
-        "po_number": "PO-7795",
-        "new_schedule": [
+        "arrivals": [
           {
-            "qty": 400,
-            "arrives_in_days": 12
+            "day": 12,
+            "qty": 400
           }
         ]
       },
       "result": {
         "part_id": "TR-29",
-        "rule": "Parts go to orders by earliest ship date; an order ships only when complete. Days are from today.",
-        "schedule_used": [
+        "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.",
+        "supply_used": [
           {
             "qty": 120,
-            "arrives_in_days": 0,
+            "day": 0,
             "source": "on hand"
           },
           {
             "qty": 400,
-            "arrives_in_days": 12,
-            "source": "PO-7795"
+            "day": 12,
+            "source": "arrival"
           }
         ],
+        "total_supply": 520,
+        "total_needed": 300,
         "orders": [
           {
             "order_id": "O-1046",
             "customer": "Hilltop Outfitters",
             "model": "Trail 29",
             "bikes": 80,
-            "parts_needed": 160,
+            "units_needed": 160,
             "ship_day": 9,
-            "ready_day": 12,
-            "on_time": false,
             "late_penalty": false,
+            "covered": false,
             "units_short": 40,
+            "first_ship_day": 12,
             "days_late": 3
           },
           {
@@ -151,39 +152,38 @@
             "customer": "Pine Valley Outdoors",
             "model": "Trail 29",
             "bikes": 40,
-            "parts_needed": 80,
+            "units_needed": 80,
             "ship_day": 16,
-            "ready_day": 12,
-            "on_time": true,
-            "late_penalty": true
+            "late_penalty": true,
+            "covered": true
           },
           {
             "order_id": "O-1050",
             "customer": "Foster Bike & Ski",
             "model": "Trail 29",
             "bikes": 30,
-            "parts_needed": 60,
+            "units_needed": 60,
             "ship_day": 24,
-            "ready_day": 12,
-            "on_time": true,
-            "late_penalty": false
+            "late_penalty": false,
+            "covered": true
           }
         ],
-        "orders_at_risk": [
+        "orders_short": [
           {
             "order_id": "O-1046",
             "customer": "Hilltop Outfitters",
             "model": "Trail 29",
             "bikes": 80,
-            "parts_needed": 160,
+            "units_needed": 160,
             "ship_day": 9,
-            "ready_day": 12,
-            "on_time": false,
             "late_penalty": false,
+            "covered": false,
             "units_short": 40,
+            "first_ship_day": 12,
             "days_late": 3
           }
-        ]
+        ],
+        "all_covered": false
       }
     }
   ]

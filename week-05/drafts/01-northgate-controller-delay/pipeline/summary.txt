@@ -1,16 +1,15 @@
 Supplier email: 01-northgate-controller-delay.eml (PO-7781 - MC-500 controllers - revised shipment schedule)
-What changed: PO-7781 (400 MC-500 motor controllers, originally all arriving on day 5) now delivers 120 units on day 5 and the remaining 280 units on day 26.
-Orders at risk:
-  - O-1043 City of Ashford Bike Share: 10 MC-500 short, 12 days late, LATE PENALTY
-  - O-1044 Main Street Bikes: 30 MC-500 short, 8 days late
-  - O-1045 Lakeview Rentals: 50 MC-500 short, 5 days late
+What changed: Of the 400 MC-500 controllers on PO-7781 (originally all due day 5), only 120 will arrive on day 5 as scheduled, with the remaining 280 arriving on day 26 (three weeks later).
+Orders at risk: O-1043, O-1044, O-1045
 Supplier reply: drafted
 Drafts saved: 4
-  - week-05/drafts/01-northgate-controller-delay/pipeline/supplier-reply.txt [APPROVE]
-  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1043.txt [APPROVE]
-  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1044.txt [APPROVE]
-  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1045.txt [APPROVE]
-Decision needed by a person: YES
-  - Whether to accept Northgate's revised schedule or take up Karen Walsh's offer this week to discuss other options. One option to raise is getting at least 10 more units before day 14 for O-1043 (City of Ashford Bike Share), the only at-risk order with a late penalty.
-  - How to answer Northgate's request for which customers are most affected, including whether to share customer names.
-  - Whether and when to tell City of Ashford Bike Share, Main Street Bikes and Lakeview Rentals that their orders may ship late (ready on day 26 instead of days 14, 18 and 21).
+  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1043.txt [reviewer: APPROVE]
+  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1044.txt [reviewer: APPROVE]
+  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1045.txt [reviewer: APPROVE]
+  - week-05/drafts/01-northgate-controller-delay/pipeline/supplier-reply.txt [reviewer: APPROVE]
+Drafts marked for a person: 1
+  - week-05/drafts/01-northgate-controller-delay/pipeline/customer-O-1043.txt: this order has a late penalty
+Decisions for a person: 2
+  - Decide how to respond to Northgate's offer to discuss other options (e.g., expedited partial shipments) to reduce the delay for the at-risk orders, especially O-1043 which carries a late penalty.
+  - Decide whether to proactively notify Blue Ridge Bike Shop (O-1042) and City of Ashford Bike Share (O-1043) given penalty exposure, and whether any customer reprioritization is needed given the 12-day lateness on O-1043.
+Total tokens: 18752 (15215 input, 3537 output)

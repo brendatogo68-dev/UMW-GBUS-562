@@ -1,2 +1,5 @@
-anthropic==2.4.0
-mcp==2.3.0
+# Week 5 packages. Install from the top of the repository:
+#   .venv\Scripts\python.exe -m pip install -r week-05\requirements.txt
+anthropic==2.4.0    # Claude API (specialists and orchestrator)
+mcp==2.3.0          # official MCP package: supply_mcp_server.py and the analyst's client
+pydantic==2.14.2    # tool input models in supply_mcp_server.py (also installed by mcp)

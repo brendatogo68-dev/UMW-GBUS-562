@@ -4,7 +4,7 @@
 - parse_email(): one .eml file into sender, subject and body.
 - call_claude(): one Messages API request with the team's model settings, counting tokens.
 - run_tool_loop(): the Week 4 tool-use loop, made general: any tools, any handler, a tool-call limit.
-- Tee: copy everything printed to a run log file.
+- Tee / run_cli: the --email / --save command line, copying everything printed to a file.
 """
 
 import json
@@ -18,10 +18,13 @@ from pathlib import Path
 
 import anthropic
 
-MODEL = "claude-opus-5-5"
+MODEL = "claude-opus-5-5"            # the orchestrator agent
+SPECIALIST_MODEL = "claude-sonnet-5"  # the four shared specialists (specialists.py)
 # Server-side refusal fallback (beta): if the model declines, the API re-runs the request on a
 # fallback model in the same call. "default" lets the API pick the fallback by refusal category.
+# Only used on models that support it; Sonnet 5 calls simply stop with a refusal error instead.
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
+FALLBACK_MODELS = {"claude-opus-5-5"}
 
 WEEK_DIR = Path(__file__).resolve().parent
 REPO_ROOT = WEEK_DIR.parent
@@ -62,9 +65,13 @@ def utf8_console():
 
 
 def load_api_key():
-    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-    if not key and API_KEY_FILE.exists():
+    """The key from API-KEY.txt in the folder above the repo (else ANTHROPIC_API_KEY).
+    Kept in memory only: never printed, logged or written to a file."""
+    key = ""
+    if API_KEY_FILE.exists():
         key = API_KEY_FILE.read_text(encoding="utf-8").strip()
+    if not key:
+        key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if not key:
         sys.exit(f"No API key found. Put it in {API_KEY_FILE} or set ANTHROPIC_API_KEY.")
     return key
@@ -128,20 +135,24 @@ class Usage:
         return "\n".join(lines + [f"  {'total':<16} {ti:>7} input, {to:>6} output"])
 
 
-async def call_claude(client, usage, role, system, messages, effort="medium", tools=None, max_tokens=16000):
-    """One Messages API request. Thinking is adaptive (always on for Opus 5.5); effort sets its depth."""
+async def call_claude(client, usage, role, system, messages, effort="medium", tools=None, max_tokens=16000,
+                      model=MODEL, tool_choice=None):
+    """One Messages API request. Thinking is adaptive; effort sets its depth."""
     kwargs = {}
     if tools:
         kwargs["tools"] = tools
+    if tool_choice:
+        kwargs["tool_choice"] = tool_choice
+    if model in FALLBACK_MODELS:
+        kwargs["betas"] = [FALLBACK_BETA]
+        kwargs["fallbacks"] = "default"
     response = await client.beta.messages.create(
-        model=MODEL,
+        model=model,
         max_tokens=max_tokens,
         system=system,
         messages=messages,
         thinking={"type": "adaptive"},
         output_config={"effort": effort},
-        betas=[FALLBACK_BETA],
-        fallbacks="default",
         **kwargs,
     )
     usage.add(role, response.usage)
@@ -153,7 +164,7 @@ async def call_claude(client, usage, role, system, messages, effort="medium", to
 
 
 async def run_tool_loop(client, usage, role, system, first_message, tools, handle_tool,
-                        max_tool_calls=10, effort="medium", stop_after=None):
+                        max_tool_calls=10, effort="medium", stop_after=None, model=MODEL):
     """The Week 4 loop: ask Claude, run each tool it requests, send results back, repeat.
 
     handle_tool(name, input) -> (text, is_error); it may be async.
@@ -163,7 +174,8 @@ async def run_tool_loop(client, usage, role, system, first_message, tools, handl
     messages = [{"role": "user", "content": first_message}]
     calls, stop_why, final_text = 0, None, ""
     while stop_why is None:
-        response = await call_claude(client, usage, role, system, messages, effort=effort, tools=tools)
+        response = await call_claude(client, usage, role, system, messages, effort=effort, tools=tools,
+                                     model=model)
         text = response_text(response)
         if text:
             print(f"  [{role}] {preview(text)}")
@@ -213,11 +225,11 @@ def parse_json_block(text):
     raise ValueError("No valid JSON object found in the reply.")
 
 
-def run_cli(description, coordinator, run_one):
+def run_cli(description, run_one):
     """Command line shared by pipeline.py and orchestrator.py.
 
-    --email FILE handles one supplier email; --all handles every .eml in brookfield-bikes/supplier-emails/.
-    Each email's console output is also saved to week-05/runs/<email>-<coordinator>.txt.
+    --email FILE   the supplier email (.eml) to handle
+    --save FILE    also write everything printed to this text file (UTF-8)
     run_one(client, email_path) is the coordinator's async function for one email.
     """
     import argparse
@@ -225,29 +237,28 @@ def run_cli(description, coordinator, run_one):
 
     utf8_console()
     parser = argparse.ArgumentParser(description=description)
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--email", help="path of one supplier email (.eml)")
-    source.add_argument("--all", action="store_true", help="handle every email in brookfield-bikes/supplier-emails/")
+    parser.add_argument("--email", required=True, help="path of one supplier email (.eml)")
+    parser.add_argument("--save", metavar="FILE", help="also write everything printed to this text file (UTF-8)")
     args = parser.parse_args()
 
-    paths = sorted(EMAILS_DIR.glob("*.eml")) if args.all else [Path(args.email)]
-    for p in paths:
-        if not p.is_file():
-            sys.exit(f"Email file not found: {p}")
+    email_path = Path(args.email)
+    if not email_path.is_file():
+        sys.exit(f"Email file not found: {email_path}")
 
-    async def main():
-        client = make_client()
-        for p in paths:
-            RUNS_DIR.mkdir(exist_ok=True)
-            log_path = RUNS_DIR / f"{p.stem}-{coordinator}.txt"
-            console = sys.stdout
-            with open(log_path, "w", encoding="utf-8") as log:
-                sys.stdout = Tee(console, log)
-                try:
-                    await run_one(client, p)
-                finally:
-                    sys.stdout.flush()
-                    sys.stdout = console
-            print(f"Run log saved to {log_path.relative_to(REPO_ROOT)}\n")
+    async def run():
+        await run_one(make_client(), email_path)
 
-    asyncio.run(main())
+    if not args.save:
+        asyncio.run(run())
+        return
+    save_path = Path(args.save)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    console = sys.stdout
+    with open(save_path, "w", encoding="utf-8") as log:
+        sys.stdout = Tee(console, log)
+        try:
+            asyncio.run(run())
+        finally:
+            sys.stdout.flush()
+            sys.stdout = console
+    print(f"Output saved to {save_path}")

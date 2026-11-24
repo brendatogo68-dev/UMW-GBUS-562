@@ -1,0 +1,33 @@
+Email: 03-keystone-on-schedule.eml
+From: Brian Foley <b.foley@keystonebattery.example>
+Subject: PO-7790 - BP-48 battery packs - shipped on schedule
+Coordinator: orchestrator agent (claude-sonnet-5)   Specialist model: claude-sonnet-5
+
+== Orchestrator
+  [orchestrator] This email indicates no change to delivery — shipment is on schedule, no action needed.
+  orchestrator step 1: finish {"summary": "Keystone Battery Co. confirmed PO-7790 (150 BP-48 battery packs) shipped on schedule and will arrive as planned. No impact to customer orders, no supplier reply or customer notices needed.", "needs_person_decision": false}
+
+>>> ORCHESTRATOR CHOICE 1: finish
+  Person must decide: no
+    -> Job finished.
+  orchestrator called finish.
+
+----------------------------------------------------------------------
+SUMMARY
+Supplier email: 03-keystone-on-schedule.eml (PO-7790 - BP-48 battery packs - shipped on schedule)
+What changed: (analyst not run)
+Orders at risk: none
+Supplier reply: not requested
+Specialists chosen: analyst no, supplier writer no, customer notices none
+Orchestrator tool calls: 1 of 10
+Orchestrator summary: Keystone Battery Co. confirmed PO-7790 (150 BP-48 battery packs) shipped on schedule and will arrive as planned. No impact to customer orders, no supplier reply or customer notices needed.
+Drafts saved: 0
+Drafts marked for a person: 0
+Decisions for a person: none
+Total tokens: 1631 (1459 input, 172 output)
+
+Tokens by role:
+  orchestrator        1459 input,    172 output
+  total               1459 input,    172 output
+
+Nothing was sent.
