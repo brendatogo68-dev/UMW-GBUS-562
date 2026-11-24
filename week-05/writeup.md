@@ -59,6 +59,76 @@ The code checked these numbers against the coverage tool's results and found no 
 
 **Summary.** Four drafts were saved in `drafts/copperline-coffee/01-danforth-pump-delay/pipeline/`, two were marked for a person, and the analyst listed three decisions for a person, such as whether to expedite or source PU-20 pumps elsewhere. The run used 19,287 tokens in total. Nothing was sent.
 
+Saved run: Email 04 (`04-pelham-maintenance-closure.eml`) through the Pipeline, copied exactly from `runs/copperline-04-pipeline.txt`. The analyst made three tool calls on SW-3 and found no orders at risk, so customer notices were skipped and the supplier writer returned NO REPLY NEEDED.
+
+````text
+Email: 04-pelham-maintenance-closure.eml
+From: Owen Brady <o.brady@pelhamfittings.example>
+Subject: Plant maintenance closure - PO-5540 not affected
+Coordinator: fixed pipeline (code)   Specialist model: claude-sonnet-5
+Company: Copperline (folder week-05/copperline-coffee)
+Columns found:
+  parts.csv: standard names
+  inbound.csv: quantity=qty, arrival_day=arrives_in_days
+  orders.csv: product=product, quantity=units, ship_day=ship_by_day
+  bill-of-materials.csv: product=product, per_unit=per_unit
+  suppliers.csv: standard names
+
+== Supply analyst
+  >> HANDOFF pipeline -> analyst: supplier email 04-pelham-maintenance-closure.eml (Plant maintenance closure - PO-5540 not affected)
+  Tools offered: check_coverage, get_orders_for_part, get_part
+  analyst step 1: get_part {"part_id": "SW-3"}
+    -> { "part_id": "SW-3", "description": "Steam wand", "supplier": "Pelham Fittings", "on_hand": 40, "scheduled_shipments": [ { "po_number": "PO-5540", "supplier": "Pelham Fittings", "qty": 60, "day": 11 } ], "used_in_products": [ { "product": "Cafe Duo", "parts_per_unit": 1 } ] }
+  analyst step 2: get_orders_for_part {"part_id": "SW-3"}
+    -> { "part_id": "SW-3", "orders": [ { "order_id": "O-2202", "customer": "Harbor Hotel Group", "product": "Cafe Duo", "quantity": 15, "parts_per_unit": 1, "units_needed": 15, "ship_day": 9, "late_penalty": false }, { "order_id": "O-2204", "customer": "Kettle & Crumb Bakery", "product": "Cafe Duo", "quan...
+  analyst step 3: check_coverage {"part_id": "SW-3", "arrivals": [{"day": 11, "qty": 60}]}
+    -> { "part_id": "SW-3", "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.", "supply_used": [ { "qty": 40, "day": 0, "source": "on hand" }...
+  [analyst] ```json { "part_id": "SW-3", "what_changed": "No change to the delivery schedule: PO-5540 (60 units) still arrives on day 11, before the supplier's one-week maintenance closure that starts on day 28.", "orders_at_risk": [], "options": [], "decisions_for_a_person": [], "supplier_questions": [] } ```
+  analyst finished (stop_reason: end_turn).
+     tokens [analyst total]: 7888 input, 446 output
+
+  ANALYST BRIEF (in full):
+  {
+    "part_id": "SW-3",
+    "what_changed": "No change to the delivery schedule: PO-5540 (60 units) still arrives on day 11, before the supplier's one-week maintenance closure that starts on day 28.",
+    "orders_at_risk": [],
+    "options": [],
+    "decisions_for_a_person": [],
+    "supplier_questions": []
+  }
+  >> HANDOFF analyst -> pipeline: brief for SW-3: 0 order(s) at risk [], 0 option(s), 0 check issue(s), 3 tool call(s)
+
+== Customer notices skipped: no orders at risk.
+
+== Supplier writer
+  >> HANDOFF pipeline -> supplier-writer: supplier email + analyst brief with customer names removed
+     tokens [supplier-writer]: 704 input, 13 output
+  [supplier-writer] draft 1: 3 words
+  >> HANDOFF supplier-writer -> pipeline: NO REPLY NEEDED (reviewer skipped)
+
+FINAL DRAFT TO SUPPLIER
+NO REPLY NEEDED
+Marked for a person: no
+
+----------------------------------------------------------------------
+SUMMARY
+Supplier email: 04-pelham-maintenance-closure.eml (Plant maintenance closure - PO-5540 not affected)
+What changed: No change to the delivery schedule: PO-5540 (60 units) still arrives on day 11, before the supplier's one-week maintenance closure that starts on day 28.
+Orders at risk: none
+Supplier reply: none needed
+Drafts saved: 0
+Drafts marked for a person: 0
+Decisions for a person: none
+Total tokens: 9051 (8592 input, 459 output)
+
+Tokens by role:
+  analyst             7888 input,    446 output
+  supplier-writer      704 input,     13 output
+  total               8592 input,    459 output
+
+Nothing was sent.
+````
+
 ## Reflection
 
 Email 1 reading: Matches. Diane says the other 160 pumps "will follow 15 days later" than the scheduled date. The brief's what_changed line puts the 40 pumps on day 4 and the other 160 on day 19, which is 15 days after day 4.
