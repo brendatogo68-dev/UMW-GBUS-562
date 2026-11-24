@@ -1,0 +1,102 @@
+Email: 02-marlow-boiler-options.eml
+From: Victor Lindqvist <v.lindqvist@marlowmetal.example>
+Subject: PO-5520 - BL-12 boilers - please choose a shipping option
+Coordinator: orchestrator agent (claude-sonnet-5)   Specialist model: claude-sonnet-5
+Company: Copperline (folder week-05/copperline-coffee)
+Columns found:
+  parts.csv: standard names
+  inbound.csv: quantity=qty, arrival_day=arrives_in_days
+  orders.csv: product=product, quantity=units, ship_day=ship_by_day
+  bill-of-materials.csv: product=product, per_unit=per_unit
+  suppliers.csv: standard names
+
+== Orchestrator
+  orchestrator step 1: run_supply_analyst {}
+
+>>> ORCHESTRATOR CHOICE 1: run_supply_analyst
+
+== Supply analyst
+  >> HANDOFF orchestrator -> analyst: supplier email 02-marlow-boiler-options.eml (PO-5520 - BL-12 boilers - please choose a shipping option)
+  Tools offered: check_coverage, get_orders_for_part, get_part
+  analyst step 1: get_part {"part_id": "BL-12"}
+    -> { "part_id": "BL-12", "description": "1.2-liter boiler", "supplier": "Marlow Metalworks", "on_hand": 60, "scheduled_shipments": [ { "po_number": "PO-5520", "supplier": "Marlow Metalworks", "qty": 200, "day": 7 } ], "used_in_products": [ { "product": "Cafe One", "parts_per_unit": 1 }, { "product": "C...
+  analyst step 2: get_orders_for_part {"part_id": "BL-12"}
+    -> { "part_id": "BL-12", "orders": [ { "order_id": "O-2201", "customer": "Morning Ritual Cafe", "product": "Cafe One", "quantity": 20, "parts_per_unit": 1, "units_needed": 20, "ship_day": 6, "late_penalty": false }, { "order_id": "O-2202", "customer": "Harbor Hotel Group", "product": "Cafe Duo", "quant...
+  analyst step 3: check_coverage {"part_id": "BL-12", "arrivals": [{"day": 7, "qty": 80}, {"day": 21, "qty": 120}]}
+    -> { "part_id": "BL-12", "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.", "supply_used": [ { "qty": 60, "day": 0, "source": "on hand" ...
+  analyst step 4: check_coverage {"part_id": "BL-12", "arrivals": [{"day": 13, "qty": 200}]}
+    -> { "part_id": "BL-12", "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.", "supply_used": [ { "qty": 60, "day": 0, "source": "on hand" ...
+  [analyst] ```json { "part_id": "BL-12", "what_changed": "PO-5520 for 200 BL-12 boilers, originally due day 7, will now arrive either split (80 on day 7 and 120 on day 21) under Option A, or all 200 together on day 13 under Option B, with Option B being the default if no choice is made within three business da...
+  analyst finished (stop_reason: end_turn).
+     tokens [analyst total]: 10845 input, 1550 output
+
+  ANALYST BRIEF (in full):
+  {
+    "part_id": "BL-12",
+    "what_changed": "PO-5520 for 200 BL-12 boilers, originally due day 7, will now arrive either split (80 on day 7 and 120 on day 21) under Option A, or all 200 together on day 13 under Option B, with Option B being the default if no choice is made within three business days.",
+    "orders_at_risk": [
+      {
+        "order_id": "O-2203",
+        "customer": "Elm State University Dining",
+        "units_short": 40,
+        "ship_day": 12,
+        "ready_day": 13,
+        "late_penalty": true
+      }
+    ],
+    "options": [
+      {
+        "name": "Option A (80 on day 7, 120 on day 21)",
+        "order_ids_at_risk": [
+          "O-2205"
+        ]
+      },
+      {
+        "name": "Option B (all 200 on day 13)",
+        "order_ids_at_risk": [
+          "O-2203"
+        ]
+      }
+    ],
+    "decisions_for_a_person": [
+      "Choose between Option A (risks order O-2205, 5 units short, 4 days late, penalty applies) and Option B (risks order O-2203, 40 units short, 1 day late, penalty applies) within the supplier's 3-business-day deadline.",
+      "If no decision is communicated, Option B will be applied by default, putting O-2203 at risk instead of O-2205."
+    ],
+    "supplier_questions": [
+      "Which shipping option (A or B) would Copperline like for PO-5520, to be confirmed within three business days?"
+    ]
+  }
+  >> HANDOFF analyst -> orchestrator: brief for BL-12: 1 order(s) at risk ['O-2203'], 2 option(s), 0 check issue(s), 4 tool call(s)
+
+== Orchestrator
+    -> brief returned (printed in full above)
+  orchestrator step 2: finish {"summary": "Marlow Metalworks can't ship the full PO-5520 (200 BL-12 boilers) on time due to reduced welding capacity. They offer two options: (A) 80 units on schedule + 120 two weeks later, which risks order O-2205 (5 units short, 4 days late); or (B) all 200 units 6 days late, which risks order O-2203 (40 units short, 1 day late, penalty applies). Marlow needs our choice within 3 business days or will default to Option B. No supplier reply or customer notice has been drafted yet since the choice of option determines which customer is affected.", "decision": "Choose Option A or Option B for PO-5520 shipping, considering which customer order (O-2205 vs O-2203) is less costly to delay/short, then confirm with supplier within 3 business days.", "needs_person_decision": true}
+
+>>> ORCHESTRATOR CHOICE 2: finish
+  Person must decide: YES - Choose Option A or Option B for PO-5520 shipping, considering which customer order (O-2205 vs O-2203) is less costly to delay/short, then confirm with supplier within 3 business days.
+    -> Job finished.
+  orchestrator called finish.
+
+----------------------------------------------------------------------
+SUMMARY
+Supplier email: 02-marlow-boiler-options.eml (PO-5520 - BL-12 boilers - please choose a shipping option)
+What changed: PO-5520 for 200 BL-12 boilers, originally due day 7, will now arrive either split (80 on day 7 and 120 on day 21) under Option A, or all 200 together on day 13 under Option B, with Option B being the default if no choice is made within three business days.
+Orders at risk: O-2203
+Supplier reply: not requested
+Specialists chosen: analyst yes, supplier writer no, customer notices none
+Orchestrator tool calls: 2 of 10
+Orchestrator summary: Marlow Metalworks can't ship the full PO-5520 (200 BL-12 boilers) on time due to reduced welding capacity. They offer two options: (A) 80 units on schedule + 120 two weeks later, which risks order O-2205 (5 units short, 4 days late); or (B) all 200 units 6 days late, which risks order O-2203 (40 units short, 1 day late, penalty applies). Marlow needs our choice within 3 business days or will default to Option B. No supplier reply or customer notice has been drafted yet since the choice of option determines which customer is affected.
+Drafts saved: 0
+Drafts marked for a person: 0
+Decisions for a person: 3
+  - Choose between Option A (risks order O-2205, 5 units short, 4 days late, penalty applies) and Option B (risks order O-2203, 40 units short, 1 day late, penalty applies) within the supplier's 3-business-day deadline.
+  - If no decision is communicated, Option B will be applied by default, putting O-2203 at risk instead of O-2205.
+  - (orchestrator) Choose Option A or Option B for PO-5520 shipping, considering which customer order (O-2205 vs O-2203) is less costly to delay/short, then confirm with supplier within 3 business days.
+Total tokens: 16870 (14642 input, 2228 output)
+
+Tokens by role:
+  orchestrator        3797 input,    678 output
+  analyst            10845 input,   1550 output
+  total              14642 input,   2228 output
+
+Nothing was sent.

@@ -1,0 +1,56 @@
+STATUS: DRAFT - NOT SENT
+Check: ready for a final read
+To: Diane Kessler <d.kessler@danforthpump.example>
+Subject: Re: PO-5512 - PU-20 pumps - partial shipment
+Reviewer: APPROVE (drafts: 1, revisions allowed: 2)
+Name check: pass
+Source email: 01-danforth-pump-delay.eml
+Coordinator: pipeline   Specialist model: claude-sonnet-5
+Saved: 2026-11-24 10:40
+
+Subject: RE: PO-5512 - PU-20 pumps - partial shipment
+
+Hello Diane,
+
+Thank you for the update. To confirm our understanding: of the 200 PU-20 pumps on PO-5512, 40 will arrive on the scheduled date (day 4), with the remaining 160 delayed until day 19.
+
+This shortfall impacts 3 of our orders, totaling 55 units short, with delays of up to 7 days. We cannot share customer names or order details, as that information is confidential.
+
+We would like to reduce this impact if possible. Could you let us know whether any portion of the remaining 160 units could be shipped sooner, even in smaller partial batches, to help offset the delay?
+
+Please note we are not in a position to confirm any options or costs at this time.
+
+Thank you for your cooperation.
+
+Purchasing, Copperline Coffee Machines
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "PU-20",
+  "what_changed": "Instead of all 200 pumps arriving on day 4, Danforth will deliver 40 on day 4 and the remaining 160 on day 19.",
+  "impact": {
+    "orders_delayed": 3,
+    "total_units_short": 55,
+    "most_days_late": 7,
+    "delayed_orders": [
+      {
+        "units_short": 10,
+        "days_late": 7
+      },
+      {
+        "units_short": 20,
+        "days_late": 4
+      },
+      {
+        "units_short": 25,
+        "days_late": 2
+      }
+    ]
+  },
+  "options": [],
+  "copperline_must_decide": true,
+  "supplier_questions": [
+    "Diane Kessler asked for a list of the customer orders these pumps are for, with each customer's name and quantity."
+  ]
+}

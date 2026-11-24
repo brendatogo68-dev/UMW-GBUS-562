@@ -1,0 +1,14 @@
+Supplier email: 02-marlow-boiler-options.eml (PO-5520 - BL-12 boilers - please choose a shipping option)
+What changed: PO-5520 for 200 BL-12 boilers, originally due day 7, will now arrive either split (80 on day 7 and 120 on day 21) under Option A, or all 200 together on day 13 under Option B, with Option B being the default if no choice is made within three business days.
+Orders at risk: O-2203
+Supplier reply: not requested
+Specialists chosen: analyst yes, supplier writer no, customer notices none
+Orchestrator tool calls: 2 of 10
+Orchestrator summary: Marlow Metalworks can't ship the full PO-5520 (200 BL-12 boilers) on time due to reduced welding capacity. They offer two options: (A) 80 units on schedule + 120 two weeks later, which risks order O-2205 (5 units short, 4 days late); or (B) all 200 units 6 days late, which risks order O-2203 (40 units short, 1 day late, penalty applies). Marlow needs our choice within 3 business days or will default to Option B. No supplier reply or customer notice has been drafted yet since the choice of option determines which customer is affected.
+Drafts saved: 0
+Drafts marked for a person: 0
+Decisions for a person: 3
+  - Choose between Option A (risks order O-2205, 5 units short, 4 days late, penalty applies) and Option B (risks order O-2203, 40 units short, 1 day late, penalty applies) within the supplier's 3-business-day deadline.
+  - If no decision is communicated, Option B will be applied by default, putting O-2203 at risk instead of O-2205.
+  - (orchestrator) Choose Option A or Option B for PO-5520 shipping, considering which customer order (O-2205 vs O-2203) is less costly to delay/short, then confirm with supplier within 3 business days.
+Total tokens: 16870 (14642 input, 2228 output)

@@ -1,0 +1,58 @@
+STATUS: DRAFT - NOT SENT
+Check: NEEDS A PERSON: the analyst's brief did not match the coverage tool
+To: Victor Lindqvist <v.lindqvist@marlowmetal.example>
+Subject: Re: PO-5520 - BL-12 boilers - please choose a shipping option
+Reviewer: APPROVE (drafts: 1, revisions allowed: 2)
+Name check: pass
+Source email: 02-marlow-boiler-options.eml
+Coordinator: pipeline   Specialist model: claude-sonnet-5
+Saved: 2026-11-24 10:48
+
+Hi Victor,
+
+Thanks for flagging this. To confirm our understanding of PO-5520: the order will now ship either as 80 units on day 7 plus 120 units on day 21 (Option A), or all 200 units together on day 13 (Option B).
+
+Based on our current schedule, this change affects 2 of our downstream orders, with 45 units short in total and delays of up to 4 days.
+
+We will confirm our choice between Option A and Option B within the three business days you've requested.
+
+In the meantime, is there any way to bring forward partial shipment or increase the initial quantity under either option? Even a small increase in early units would help reduce the impact on our side.
+
+Regards,
+Purchasing, Copperline Coffee Machines
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "BL-12",
+  "what_changed": "PO-5520 (200 BL-12 boilers, originally due day 7) will now ship either as 80 units on day 7 plus 120 units on day 21 (Option A), or all 200 units together on day 13 (Option B).",
+  "impact": {
+    "orders_delayed": 2,
+    "total_units_short": 45,
+    "most_days_late": 4,
+    "delayed_orders": [
+      {
+        "units_short": 5,
+        "days_late": 4
+      },
+      {
+        "units_short": 40,
+        "days_late": 1
+      }
+    ]
+  },
+  "options": [
+    {
+      "name": "Option A (80 on day 7, 120 on day 21)",
+      "orders_delayed": 0
+    },
+    {
+      "name": "Option B (200 on day 13)",
+      "orders_delayed": 0
+    }
+  ],
+  "copperline_must_decide": true,
+  "supplier_questions": [
+    "Which shipping option (A or B) would Copperline like for PO-5520, to be confirmed within three business days?"
+  ]
+}

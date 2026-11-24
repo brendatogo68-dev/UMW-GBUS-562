@@ -1,0 +1,31 @@
+STATUS: DRAFT - NOT SENT
+Check: NEEDS A PERSON: this order has a late penalty; the analyst's brief did not match the coverage tool; the supplier offers options; send only if the chosen option delays this order
+To: Tall Pines Coffee House <hello@tallpinescoffee.example>
+Subject: Update on your order O-2205
+Reviewer: APPROVE (drafts: 1, revisions allowed: 2)
+Name check: pass
+Source email: 02-marlow-boiler-options.eml
+Coordinator: pipeline   Specialist model: claude-sonnet-5
+Saved: 2026-11-24 10:48
+
+Dear Tall Pines Coffee House,
+
+We're writing about your order O-2205 for 25 units of the Cafe One. This order is now expected to ship 4 days later than originally planned, with shipment now expected in 21 days.
+
+We apologize for this delay. It is due to a delay in a part from one of our suppliers.
+
+We'll keep you updated if anything further changes with your order timeline. Thank you for your patience and for choosing Copperline Coffee Machines.
+
+Customer Service, Copperline Coffee Machines
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "customer": "Tall Pines Coffee House",
+  "order_id": "O-2205",
+  "product": "Cafe One",
+  "quantity": 25,
+  "planned_ship_in_days": 17,
+  "now_expected_ship_in_days": 21,
+  "days_later_than_planned": 4
+}

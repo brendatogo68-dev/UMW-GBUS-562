@@ -1,0 +1,17 @@
+Supplier email: 02-marlow-boiler-options.eml (PO-5520 - BL-12 boilers - please choose a shipping option)
+What changed: PO-5520 (200 BL-12 boilers, originally due day 7) will now ship either as 80 units on day 7 plus 120 units on day 21 (Option A), or all 200 units together on day 13 (Option B).
+Orders at risk: O-2205, O-2203
+Supplier reply: drafted
+Drafts saved: 3
+  - week-05/drafts/copperline-coffee/02-marlow-boiler-options/pipeline/customer-O-2205.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/02-marlow-boiler-options/pipeline/customer-O-2203.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/02-marlow-boiler-options/pipeline/supplier-reply.txt [reviewer: APPROVE]
+Drafts marked for a person: 3
+  - week-05/drafts/copperline-coffee/02-marlow-boiler-options/pipeline/customer-O-2205.txt: this order has a late penalty; the analyst's brief did not match the coverage tool; the supplier offers options; send only if the chosen option delays this order
+  - week-05/drafts/copperline-coffee/02-marlow-boiler-options/pipeline/customer-O-2203.txt: this order has a late penalty; the analyst's brief did not match the coverage tool; the supplier offers options; send only if the chosen option delays this order
+  - week-05/drafts/copperline-coffee/02-marlow-boiler-options/pipeline/supplier-reply.txt: the analyst's brief did not match the coverage tool
+Decisions for a person: 3
+  - Choose between Option A and Option B within the supplier's three-business-day deadline (default is Option B if no response).
+  - Both options put one late-penalty order at risk: Option A delays O-2205 (Tall Pines Coffee House, 5 units short, 4 days late); Option B delays O-2203 (Elm State University Dining, 40 units short, 1 day late). Decide which penalty/customer impact is more acceptable, or consider expediting/alternate sourcing to cover the shortfall.
+  - Check the analyst's numbers: Option 'Option A (80 on day 7, 120 on day 21)': orders [] match no check_coverage result.; Option 'Option B (200 on day 13)': orders [] match no check_coverage result.
+Total tokens: 17863 (15074 input, 2789 output)

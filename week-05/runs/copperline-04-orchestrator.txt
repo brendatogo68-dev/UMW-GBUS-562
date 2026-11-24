@@ -1,0 +1,39 @@
+Email: 04-pelham-maintenance-closure.eml
+From: Owen Brady <o.brady@pelhamfittings.example>
+Subject: Plant maintenance closure - PO-5540 not affected
+Coordinator: orchestrator agent (claude-sonnet-5)   Specialist model: claude-sonnet-5
+Company: Copperline (folder week-05/copperline-coffee)
+Columns found:
+  parts.csv: standard names
+  inbound.csv: quantity=qty, arrival_day=arrives_in_days
+  orders.csv: product=product, quantity=units, ship_day=ship_by_day
+  bill-of-materials.csv: product=product, per_unit=per_unit
+  suppliers.csv: standard names
+
+== Orchestrator
+  orchestrator step 1: finish {"summary": "Pelham Fittings notified of a one-week plant maintenance closure starting in four weeks, but confirmed that PO-5540 (60 SW-3 steam wands) ships before the closure and will arrive on schedule. No impact to Copperline orders, so no supplier reply or customer notices are needed.", "needs_person_decision": false}
+
+>>> ORCHESTRATOR CHOICE 1: finish
+  Person must decide: no
+    -> Job finished.
+  orchestrator called finish.
+
+----------------------------------------------------------------------
+SUMMARY
+Supplier email: 04-pelham-maintenance-closure.eml (Plant maintenance closure - PO-5540 not affected)
+What changed: (analyst not run)
+Orders at risk: none
+Supplier reply: not requested
+Specialists chosen: analyst no, supplier writer no, customer notices none
+Orchestrator tool calls: 1 of 10
+Orchestrator summary: Pelham Fittings notified of a one-week plant maintenance closure starting in four weeks, but confirmed that PO-5540 (60 SW-3 steam wands) ships before the closure and will arrive on schedule. No impact to Copperline orders, so no supplier reply or customer notices are needed.
+Drafts saved: 0
+Drafts marked for a person: 0
+Decisions for a person: none
+Total tokens: 1777 (1476 input, 301 output)
+
+Tokens by role:
+  orchestrator        1476 input,    301 output
+  total               1476 input,    301 output
+
+Nothing was sent.

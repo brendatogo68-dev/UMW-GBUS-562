@@ -1,0 +1,9 @@
+Supplier email: 03-ashgrove-burr-delay.eml (PO-5531 - BR-64 burr sets - arriving 3 days late)
+What changed: PO-5531 (120 units of BR-64) will now arrive on day 13 instead of the originally scheduled day 10, a 3-day delay, shipping as a single full-quantity delivery.
+Orders at risk: none
+Supplier reply: drafted
+Drafts saved: 1
+  - week-05/drafts/copperline-coffee/03-ashgrove-burr-delay/pipeline/supplier-reply.txt [reviewer: APPROVE]
+Drafts marked for a person: 0
+Decisions for a person: none
+Total tokens: 10732 (9598 input, 1134 output)

@@ -1,0 +1,21 @@
+Supplier email: 01-danforth-pump-delay.eml (PO-5512 - PU-20 pumps - partial shipment)
+What changed: PO-5512 will now arrive as 40 units on day 4 (as scheduled) and the remaining 160 units on day 19 (15 days later than the original day-4 delivery), instead of all 200 arriving on day 4.
+Orders at risk: O-2203, O-2204, O-2205
+Supplier reply: drafted
+Specialists chosen: analyst yes, supplier writer yes, customer notices O-2203, O-2204, O-2205
+Orchestrator tool calls: 6 of 10
+Orchestrator summary: Danforth Pump Works (PO-5512) can only deliver 40 of 200 PU-20 pumps on schedule; the remaining 160 will arrive 15 days late (day 19 instead of day 4). This affects 3 customer orders: O-2203 (Elm State University Dining, 7 days late, has late penalty), O-2204 (Kettle & Crumb Bakery, 4 days late, no penalty), and O-2205 (Tall Pines Coffee House, 2 days late, has late penalty). A supplier reply was drafted asking Danforth if any partial early shipment is possible, and declined to share customer names/order details per the supplier's request. Customer notices were drafted for all three affected orders; the two with late penalties (O-2203, O-2205) are flagged for your review before sending.
+Drafts saved: 4
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/orchestrator/supplier-reply.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/orchestrator/customer-O-2203.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/orchestrator/customer-O-2204.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/orchestrator/customer-O-2205.txt [reviewer: APPROVE]
+Drafts marked for a person: 2
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/orchestrator/customer-O-2203.txt: this order has a late penalty
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/orchestrator/customer-O-2205.txt: this order has a late penalty
+Decisions for a person: 4
+  - Decide whether to notify affected customers (Elm State University Dining, Kettle & Crumb Bakery, Tall Pines Coffee House) of expected delays (7, 4, and 2 days late respectively) given two of these orders carry late penalties.
+  - Decide whether to expedite or source PU-20 pumps elsewhere to avoid the penalty on O-2203 and O-2205.
+  - Decide what customer order details (names and quantities) to send back to the supplier as requested.
+  - (orchestrator) Please decide: (1) whether to pursue expediting/alternate sourcing for PU-20 pumps to avoid late penalties on O-2203 and O-2205, (2) whether to share any customer order details with Danforth despite the privacy approach taken in the draft reply, and (3) review/approve the customer notices, especially the two penalty-affected orders.
+Total tokens: 27873 (23930 input, 3943 output)

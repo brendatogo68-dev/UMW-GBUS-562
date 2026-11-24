@@ -1,0 +1,8 @@
+Supplier email: 04-pelham-maintenance-closure.eml (Plant maintenance closure - PO-5540 not affected)
+What changed: No change to the delivery schedule: PO-5540 (60 units) still arrives on day 11, before the supplier's one-week maintenance closure that starts on day 28.
+Orders at risk: none
+Supplier reply: none needed
+Drafts saved: 0
+Drafts marked for a person: 0
+Decisions for a person: none
+Total tokens: 9051 (8592 input, 459 output)

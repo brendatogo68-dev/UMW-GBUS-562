@@ -1,0 +1,40 @@
+STATUS: DRAFT - NOT SENT
+Check: ready for a final read
+To: Priya Raman <p.raman@ashgroveprecision.example>
+Subject: Re: PO-5531 - BR-64 burr sets - arriving 3 days late
+Reviewer: APPROVE (drafts: 1, revisions allowed: 2)
+Name check: pass
+Source email: 03-ashgrove-burr-delay.eml
+Coordinator: orchestrator   Specialist model: claude-sonnet-5
+Saved: 2026-11-24 10:51
+
+Subject: RE: PO-5531 - BR-64 burr sets - arriving 3 days late
+
+Hello Priya,
+
+Thank you for the update. We confirm our understanding: PO-5531 (120 units of BR-64) will now arrive on day 13 instead of day 10, a 3-day delay, shipping complete in one batch.
+
+Based on our current schedules, this delay causes no order impact on our side - 0 units short and no orders delayed.
+
+If there's any way to ship sooner or in partial shipments to reduce the delay further, we'd welcome that. Otherwise, no action is needed on our end.
+
+Best regards,
+Purchasing, Copperline Coffee Machines
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "BR-64",
+  "what_changed": "PO-5531 (120 units of BR-64) will now arrive on day 13 instead of day 10, a 3-day delay, shipping complete in one batch.",
+  "impact": {
+    "orders_delayed": 0,
+    "total_units_short": 0,
+    "most_days_late": 0,
+    "delayed_orders": []
+  },
+  "options": [],
+  "copperline_must_decide": false,
+  "supplier_questions": [
+    "Please let the supplier know if the 3-day delay causes any problems on Copperline's side."
+  ]
+}

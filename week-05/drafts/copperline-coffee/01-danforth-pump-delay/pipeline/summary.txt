@@ -1,0 +1,17 @@
+Supplier email: 01-danforth-pump-delay.eml (PO-5512 - PU-20 pumps - partial shipment)
+What changed: Instead of all 200 pumps arriving on day 4, Danforth will deliver 40 on day 4 and the remaining 160 on day 19.
+Orders at risk: O-2203, O-2204, O-2205
+Supplier reply: drafted
+Drafts saved: 4
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/pipeline/customer-O-2203.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/pipeline/customer-O-2204.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/pipeline/customer-O-2205.txt [reviewer: APPROVE]
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/pipeline/supplier-reply.txt [reviewer: APPROVE]
+Drafts marked for a person: 2
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/pipeline/customer-O-2203.txt: this order has a late penalty
+  - week-05/drafts/copperline-coffee/01-danforth-pump-delay/pipeline/customer-O-2205.txt: this order has a late penalty
+Decisions for a person: 3
+  - Decide whether to expedite or source PU-20 pumps elsewhere to protect O-2203 and O-2205, which carry late penalties and would otherwise ship 7 and 2 days late respectively.
+  - Decide whether to notify Elm State University Dining, Kettle & Crumb Bakery, and Tall Pines Coffee House of the expected delay.
+  - Decide what information to send back to Danforth about the affected customer orders (names/quantities), per their request.
+Total tokens: 19287 (16065 input, 3222 output)

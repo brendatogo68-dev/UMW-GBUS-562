@@ -1,0 +1,56 @@
+STATUS: DRAFT - NOT SENT
+Check: ready for a final read
+To: Diane Kessler <d.kessler@danforthpump.example>
+Subject: Re: PO-5512 - PU-20 pumps - partial shipment
+Reviewer: APPROVE (drafts: 1, revisions allowed: 2)
+Name check: pass
+Source email: 01-danforth-pump-delay.eml
+Coordinator: orchestrator   Specialist model: claude-sonnet-5
+Saved: 2026-11-24 10:41
+
+Subject: RE: PO-5512 - PU-20 pumps - partial shipment
+
+Hello Diane,
+
+Thank you for the update. To confirm our understanding: PO-5512 will now arrive as 40 units on day 4 as scheduled, with the remaining 160 units arriving on day 19, 15 days later than originally planned.
+
+On our end, this split shipment will affect 3 of our customer orders, totaling 55 units short, with delays of up to 7 days. We are not able to share customer names or order details, but wanted to give you a sense of the impact.
+
+To help reduce this delay, is there any way to expedite a portion of the remaining 160 units sooner than day 19? Even a partial early shipment would help us reduce the impact on our side.
+
+We will confirm our position on this delay by the time you need a decision.
+
+Thank you for your continued cooperation.
+
+Purchasing, Copperline Coffee Machines
+
+------------------------------------------------------------
+Facts the writer was given:
+{
+  "part_id": "PU-20",
+  "what_changed": "PO-5512 will now arrive as 40 units on day 4 (as scheduled) and the remaining 160 units on day 19 (15 days later than the original day-4 delivery), instead of all 200 arriving on day 4.",
+  "impact": {
+    "orders_delayed": 3,
+    "total_units_short": 55,
+    "most_days_late": 7,
+    "delayed_orders": [
+      {
+        "units_short": 10,
+        "days_late": 7
+      },
+      {
+        "units_short": 20,
+        "days_late": 4
+      },
+      {
+        "units_short": 25,
+        "days_late": 2
+      }
+    ]
+  },
+  "options": [],
+  "copperline_must_decide": true,
+  "supplier_questions": [
+    "Diane Kessler asked for a list of the customer orders these pumps are for, with each customer's name and quantity."
+  ]
+}

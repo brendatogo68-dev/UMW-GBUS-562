@@ -1,0 +1,12 @@
+Supplier email: 03-ashgrove-burr-delay.eml (PO-5531 - BR-64 burr sets - arriving 3 days late)
+What changed: PO-5531 (120 units of BR-64) will now arrive on day 13 instead of day 10, a 3-day delay, shipping complete in one batch.
+Orders at risk: none
+Supplier reply: drafted
+Specialists chosen: analyst yes, supplier writer yes, customer notices none
+Orchestrator tool calls: 3 of 10
+Orchestrator summary: Ashgrove Precision notified that PO-5531 (120 BR-64 burr sets) will arrive 3 days late due to a furnace repair, shipping complete in one batch. Analyst confirmed this delay creates no risk to current customer orders, so no customer notices were needed. A supplier reply has been drafted confirming receipt and noting no impact on our side, and was approved by review - it's ready for a quick check and sending.
+Drafts saved: 1
+  - week-05/drafts/copperline-coffee/03-ashgrove-burr-delay/orchestrator/supplier-reply.txt [reviewer: APPROVE]
+Drafts marked for a person: 0
+Decisions for a person: none
+Total tokens: 16910 (15061 input, 1849 output)

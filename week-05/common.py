@@ -1,10 +1,13 @@
-"""Shared helpers for the Brookfield agent team (adapted from Week-04/agent.py).
+"""Shared helpers for the supplier-email agent team (adapted from Week-04/agent.py).
 
 - load_api_key(): ANTHROPIC_API_KEY, else ../API-KEY.txt outside the repo (never printed or saved).
 - parse_email(): one .eml file into sender, subject and body.
 - call_claude(): one Messages API request with the team's model settings, counting tokens.
 - run_tool_loop(): the Week 4 tool-use loop, made general: any tools, any handler, a tool-call limit.
-- Tee / run_cli: the --email / --save command line, copying everything printed to a file.
+- Tee / run_cli: the --email / --org / --save command line, copying everything printed to a file.
+
+The company (its CSV data and the specialists' prompts) comes from a company folder: --org, default
+week-05/brookfield-bikes. See supply_mcp_server.resolve_org.
 """
 
 import json
@@ -28,10 +31,7 @@ FALLBACK_MODELS = {"claude-opus-5-5"}
 
 WEEK_DIR = Path(__file__).resolve().parent
 REPO_ROOT = WEEK_DIR.parent
-DATA_DIR = WEEK_DIR / "brookfield-bikes"
-PROMPTS_DIR = DATA_DIR / "prompts"
-EMAILS_DIR = DATA_DIR / "supplier-emails"
-DRAFTS_DIR = WEEK_DIR / "drafts"
+DRAFTS_DIR = WEEK_DIR / "drafts"   # drafts/<company folder>/<email>/<coordinator>/
 RUNS_DIR = WEEK_DIR / "runs"
 API_KEY_FILE = REPO_ROOT.parent / "API-KEY.txt"
 PREVIEW_CHARS = 300
@@ -81,9 +81,10 @@ def make_client():
     return anthropic.AsyncAnthropic(api_key=load_api_key())
 
 
-def load_prompt(name):
-    # Re-read on every run so edits to a prompt take effect immediately.
-    return (PROMPTS_DIR / f"{name}.txt").read_text(encoding="utf-8").strip()
+def load_prompt(org_dir, name):
+    """A specialist's system prompt from <company folder>/prompts/<name>.txt.
+    Re-read on every run so edits to a prompt take effect immediately."""
+    return (Path(org_dir) / "prompts" / f"{name}.txt").read_text(encoding="utf-8").strip()
 
 
 def parse_email(path):
@@ -167,7 +168,8 @@ async def run_tool_loop(client, usage, role, system, first_message, tools, handl
                         max_tool_calls=10, effort="medium", stop_after=None, model=MODEL):
     """The Week 4 loop: ask Claude, run each tool it requests, send results back, repeat.
 
-    handle_tool(name, input) -> (text, is_error); it may be async.
+    handle_tool(name, input) -> (text, is_error) or (text, is_error, shown); it may be async.
+    shown, if given, is printed instead of a preview of text (e.g. so a draft isn't printed twice).
     stop_after: a tool name that ends the loop once it succeeds (e.g. the orchestrator's finish).
     Returns (final_text, tool_calls, stop_why, messages).
     """
@@ -201,10 +203,10 @@ async def run_tool_loop(client, usage, role, system, first_message, tools, handl
                 out = handle_tool(block.name, block.input or {})
                 if hasattr(out, "__await__"):
                     out = await out
-                text, is_error = out
+                text, is_error, shown = (*out, None) if len(out) == 2 else out
             except Exception as e:  # report tool failures back to Claude instead of crashing
-                text, is_error = f"Tool failed: {e}", True
-            print(f"    -> {'(error) ' if is_error else ''}{preview(text)}")
+                text, is_error, shown = f"Tool failed: {e}", True, None
+            print(f"    -> {'(error) ' if is_error else ''}{shown if shown is not None else preview(text)}")
             results.append({"type": "tool_result", "tool_use_id": block.id, "content": text, "is_error": is_error})
             if stop_after and block.name == stop_after and not is_error:
                 stop_why = f"{role} called {stop_after}."
@@ -229,21 +231,37 @@ def run_cli(description, run_one):
     """Command line shared by pipeline.py and orchestrator.py.
 
     --email FILE   the supplier email (.eml) to handle
+    --org FOLDER   the company folder: a name inside week-05 (copperline-coffee) or a path
+                   (default: brookfield-bikes). Its CSV files and prompts/ are used.
     --save FILE    also write everything printed to this text file (UTF-8)
-    run_one(client, email_path) is the coordinator's async function for one email.
+    run_one(client, email_path) is the coordinator's async function for one email. The company is
+    set (specialists.use_org) before it runs.
     """
     import argparse
     import asyncio
 
+    from supply_mcp_server import OrgError, resolve_org
+    import specialists
+
     utf8_console()
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--email", required=True, help="path of one supplier email (.eml)")
+    parser.add_argument("--org", metavar="FOLDER",
+                        help="company folder: a name inside week-05 or a path (default: brookfield-bikes)")
     parser.add_argument("--save", metavar="FILE", help="also write everything printed to this text file (UTF-8)")
     args = parser.parse_args()
 
     email_path = Path(args.email)
     if not email_path.is_file():
         sys.exit(f"Email file not found: {email_path}")
+    try:
+        org_dir = resolve_org(args.org)
+        specialists.use_org(org_dir)
+    except OrgError as e:
+        sys.exit(str(e))
+    if org_dir not in email_path.resolve().parents:
+        print(f"WARNING: {email_path} is not in the company folder {org_dir.name}. "
+              f"Is --org right?", file=sys.stderr)
 
     async def run():
         await run_one(make_client(), email_path)

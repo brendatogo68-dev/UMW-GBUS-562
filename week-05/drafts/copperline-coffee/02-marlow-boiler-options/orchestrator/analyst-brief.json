@@ -1,0 +1,289 @@
+{
+  "brief": {
+    "part_id": "BL-12",
+    "what_changed": "PO-5520 for 200 BL-12 boilers, originally due day 7, will now arrive either split (80 on day 7 and 120 on day 21) under Option A, or all 200 together on day 13 under Option B, with Option B being the default if no choice is made within three business days.",
+    "orders_at_risk": [
+      {
+        "order_id": "O-2203",
+        "customer": "Elm State University Dining",
+        "units_short": 40,
+        "ship_day": 12,
+        "ready_day": 13,
+        "late_penalty": true
+      }
+    ],
+    "options": [
+      {
+        "name": "Option A (80 on day 7, 120 on day 21)",
+        "order_ids_at_risk": [
+          "O-2205"
+        ]
+      },
+      {
+        "name": "Option B (all 200 on day 13)",
+        "order_ids_at_risk": [
+          "O-2203"
+        ]
+      }
+    ],
+    "decisions_for_a_person": [
+      "Choose between Option A (risks order O-2205, 5 units short, 4 days late, penalty applies) and Option B (risks order O-2203, 40 units short, 1 day late, penalty applies) within the supplier's 3-business-day deadline.",
+      "If no decision is communicated, Option B will be applied by default, putting O-2203 at risk instead of O-2205."
+    ],
+    "supplier_questions": [
+      "Which shipping option (A or B) would Copperline like for PO-5520, to be confirmed within three business days?"
+    ]
+  },
+  "check_issues": [],
+  "coverage_runs": [
+    {
+      "input": {
+        "part_id": "BL-12",
+        "arrivals": [
+          {
+            "day": 7,
+            "qty": 80
+          },
+          {
+            "day": 21,
+            "qty": 120
+          }
+        ]
+      },
+      "result": {
+        "part_id": "BL-12",
+        "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.",
+        "supply_used": [
+          {
+            "qty": 60,
+            "day": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 80,
+            "day": 7,
+            "source": "arrival"
+          },
+          {
+            "qty": 120,
+            "day": 21,
+            "source": "arrival"
+          }
+        ],
+        "total_supply": 260,
+        "total_needed": 184,
+        "orders": [
+          {
+            "order_id": "O-2201",
+            "customer": "Morning Ritual Cafe",
+            "product": "Cafe One",
+            "quantity": 20,
+            "units_needed": 20,
+            "ship_day": 6,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2202",
+            "customer": "Harbor Hotel Group",
+            "product": "Cafe Duo",
+            "quantity": 15,
+            "units_needed": 30,
+            "ship_day": 9,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2203",
+            "customer": "Elm State University Dining",
+            "product": "Cafe One",
+            "quantity": 50,
+            "units_needed": 50,
+            "ship_day": 12,
+            "late_penalty": true,
+            "covered": true
+          },
+          {
+            "order_id": "O-2204",
+            "customer": "Kettle & Crumb Bakery",
+            "product": "Cafe Duo",
+            "quantity": 10,
+            "units_needed": 20,
+            "ship_day": 15,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2205",
+            "customer": "Tall Pines Coffee House",
+            "product": "Cafe One",
+            "quantity": 25,
+            "units_needed": 25,
+            "ship_day": 17,
+            "late_penalty": true,
+            "covered": false,
+            "units_short": 5,
+            "first_ship_day": 21,
+            "days_late": 4
+          },
+          {
+            "order_id": "O-2208",
+            "customer": "Northside Roasters",
+            "product": "Cafe Duo",
+            "quantity": 12,
+            "units_needed": 24,
+            "ship_day": 30,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2210",
+            "customer": "Bright Day Coworking",
+            "product": "Cafe One",
+            "quantity": 15,
+            "units_needed": 15,
+            "ship_day": 33,
+            "late_penalty": false,
+            "covered": true
+          }
+        ],
+        "orders_short": [
+          {
+            "order_id": "O-2205",
+            "customer": "Tall Pines Coffee House",
+            "product": "Cafe One",
+            "quantity": 25,
+            "units_needed": 25,
+            "ship_day": 17,
+            "late_penalty": true,
+            "covered": false,
+            "units_short": 5,
+            "first_ship_day": 21,
+            "days_late": 4
+          }
+        ],
+        "all_covered": false
+      }
+    },
+    {
+      "input": {
+        "part_id": "BL-12",
+        "arrivals": [
+          {
+            "day": 13,
+            "qty": 200
+          }
+        ]
+      },
+      "result": {
+        "part_id": "BL-12",
+        "rule": "Arrivals replace the part's scheduled shipments; stock on hand is available on day 0. Orders are filled complete, in ship-day order, so a short order holds up the ones after it. Days are counted from today.",
+        "supply_used": [
+          {
+            "qty": 60,
+            "day": 0,
+            "source": "on hand"
+          },
+          {
+            "qty": 200,
+            "day": 13,
+            "source": "arrival"
+          }
+        ],
+        "total_supply": 260,
+        "total_needed": 184,
+        "orders": [
+          {
+            "order_id": "O-2201",
+            "customer": "Morning Ritual Cafe",
+            "product": "Cafe One",
+            "quantity": 20,
+            "units_needed": 20,
+            "ship_day": 6,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2202",
+            "customer": "Harbor Hotel Group",
+            "product": "Cafe Duo",
+            "quantity": 15,
+            "units_needed": 30,
+            "ship_day": 9,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2203",
+            "customer": "Elm State University Dining",
+            "product": "Cafe One",
+            "quantity": 50,
+            "units_needed": 50,
+            "ship_day": 12,
+            "late_penalty": true,
+            "covered": false,
+            "units_short": 40,
+            "first_ship_day": 13,
+            "days_late": 1
+          },
+          {
+            "order_id": "O-2204",
+            "customer": "Kettle & Crumb Bakery",
+            "product": "Cafe Duo",
+            "quantity": 10,
+            "units_needed": 20,
+            "ship_day": 15,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2205",
+            "customer": "Tall Pines Coffee House",
+            "product": "Cafe One",
+            "quantity": 25,
+            "units_needed": 25,
+            "ship_day": 17,
+            "late_penalty": true,
+            "covered": true
+          },
+          {
+            "order_id": "O-2208",
+            "customer": "Northside Roasters",
+            "product": "Cafe Duo",
+            "quantity": 12,
+            "units_needed": 24,
+            "ship_day": 30,
+            "late_penalty": false,
+            "covered": true
+          },
+          {
+            "order_id": "O-2210",
+            "customer": "Bright Day Coworking",
+            "product": "Cafe One",
+            "quantity": 15,
+            "units_needed": 15,
+            "ship_day": 33,
+            "late_penalty": false,
+            "covered": true
+          }
+        ],
+        "orders_short": [
+          {
+            "order_id": "O-2203",
+            "customer": "Elm State University Dining",
+            "product": "Cafe One",
+            "quantity": 50,
+            "units_needed": 50,
+            "ship_day": 12,
+            "late_penalty": true,
+            "covered": false,
+            "units_short": 40,
+            "first_ship_day": 13,
+            "days_late": 1
+          }
+        ],
+        "all_covered": false
+      }
+    }
+  ]
+}
